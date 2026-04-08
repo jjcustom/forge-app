@@ -126,6 +126,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg
 .setting-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}.setting-row:last-child{border-bottom:none}
 .setting-lbl{font-size:13px}.setting-sub{font-size:10px;color:var(--text3);margin-top:2px}
 select{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;padding:6px 10px;cursor:pointer}
+.api-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:inherit;font-size:12px;padding:10px;margin-top:6px}
+.scan-btn{width:100%;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:700;font-family:inherit;padding:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px}
+.scan-btn:active{opacity:0.85;transform:scale(0.98)}
+.scan-result{background:var(--surface2);border:1px solid rgba(59,130,246,0.3);border-radius:12px;padding:14px;margin-top:10px}
+.scan-result-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.scan-result-row:last-child{border-bottom:none}
+.scan-result-label{color:var(--text2)}
+.scan-result-val{font-weight:600;color:var(--blue)}
+.scan-status{font-size:12px;color:var(--text2);text-align:center;padding:12px;line-height:1.6}
 .sched-row{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);gap:10px}
 .sched-row:last-child{border-bottom:none}
 .sched-day{font-size:11px;font-weight:600;width:32px;flex-shrink:0}
@@ -155,16 +164,29 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
     <div class="metric"><div class="metric-val" style="color:var(--amber)" id="dp">0</div><div class="metric-label">plateaus</div></div>
   </div>
   <div class="watch-card">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div><div style="font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase">Apple Watch - Apr 8 2026</div><div style="font-size:14px;font-weight:600;margin-top:2px">Day 1 - Push 1</div><div style="font-size:10px;color:var(--text3);margin-top:1px">5:54 AM to 6:36 AM - 42:19</div></div>
-      <div style="text-align:right"><div style="font-size:22px;font-weight:700;color:var(--green)">294</div><div style="font-size:9px;color:var(--text3)">ACTIVE CAL</div></div>
-    </div>
-    <div class="watch-stats">
-      <div><div class="ws-val">382</div><div class="ws-lbl">Total cal</div></div>
-      <div><div class="ws-val">110</div><div class="ws-lbl">Avg HR</div></div>
-      <div><div class="ws-val">71-146</div><div class="ws-lbl">HR range</div></div>
+    <div id="watch-card-dynamic">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase">Apple Watch - Apr 8 2026</div><div style="font-size:14px;font-weight:600;margin-top:2px">Day 1 - Push 1</div><div style="font-size:10px;color:var(--text3);margin-top:1px">5:54 AM to 6:36 AM - 42:19</div></div>
+        <div style="text-align:right"><div style="font-size:22px;font-weight:700;color:var(--green)">294</div><div style="font-size:9px;color:var(--text3)">ACTIVE CAL</div></div>
+      </div>
+      <div class="watch-stats">
+        <div><div class="ws-val">382</div><div class="ws-lbl">Total cal</div></div>
+        <div><div class="ws-val">110</div><div class="ws-lbl">Avg HR</div></div>
+        <div><div class="ws-val">71-146</div><div class="ws-lbl">HR range</div></div>
+      </div>
     </div>
   </div>
+  <div class="card">
+    <div class="card-title">Scan watch data</div>
+    <button class="scan-btn" onclick="triggerScan()">
+      <span style="font-size:18px">⌚</span> Scan Watch Screenshot
+    </button>
+    <input type="file" id="watch-file-input" accept="image/*" style="display:none" onchange="handleWatchImage(event)">
+    <div id="scan-status" class="scan-status" style="display:none"></div>
+    <div id="scan-result" style="display:none"></div>
+    <div style="font-size:10px;color:var(--text3);margin-top:6px;text-align:center">Take a screenshot of your Apple Watch workout summary then tap above</div>
+  </div>
+
   <div class="card">
     <div class="card-title">Weight log</div>
     <div class="row-input"><input type="number" id="wi" placeholder="lbs" value="215" step="0.1"><button class="btn-primary" onclick="logWt()">Log</button></div>
@@ -250,6 +272,12 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 </div>
 
 <div id="tab-cfg" class="section">
+  <div class="card">
+    <div class="card-title">Watch scan - Anthropic API key</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.7">Required for the Watch screenshot scanner. Get a free key at <strong style="color:var(--text)">console.anthropic.com</strong> then paste it below. Costs fractions of a cent per scan. Stored only on your phone.</div>
+    <input type="password" id="api-key-input" class="api-input" placeholder="sk-ant-..." oninput="saveApiKey()">
+    <div id="api-key-status" style="font-size:11px;margin-top:6px;color:var(--text3)">No API key saved</div>
+  </div>
   <div class="card">
     <div class="card-title">Plateau detection</div>
     <div class="setting-row"><div><div class="setting-lbl">Sessions before alert</div><div class="setting-sub">No weight or rep improvement</div></div><select id="pt" onchange="updPlat()"><option value="2">2 sessions</option><option value="3" selected>3 sessions</option><option value="4">4 sessions</option><option value="5">5 sessions</option></select></div>
@@ -793,7 +821,129 @@ function resetSauna(){clearInterval(ST.saunaInt);ST.saunaOn=false;ST.saunaS=0;do
 function updPlat(){ST.plThr=parseInt(document.getElementById('pt').value);ST.plSens=document.getElementById('ps').value;document.getElementById('pwd').textContent=ST.plThr;save();renderDash();}
 function resetAll(){if(confirm('Reset ALL data?')){ST={wt:215,wtLog:[],wd:{},rehab:{},groc:{},notes:[],wk:1,plThr:3,plSens:'lenient',saunaOn:false,saunaS:0,saunaInt:null};save();injectD1();location.reload();}}
 
+/* ── WATCH SCANNER ── */
+function saveApiKey(){
+  const v=document.getElementById('api-key-input').value.trim();
+  try{localStorage.setItem('forge_api_key',v);}catch(e){}
+  const st=document.getElementById('api-key-status');
+  if(st)st.textContent=v?'API key saved - ready to scan':'No API key saved';
+  if(st)st.style.color=v?'var(--green)':'var(--text3)';
+}
+
+function loadApiKey(){
+  try{
+    const k=localStorage.getItem('forge_api_key')||'';
+    const inp=document.getElementById('api-key-input');
+    const st=document.getElementById('api-key-status');
+    if(inp)inp.value=k;
+    if(st){st.textContent=k?'API key saved - ready to scan':'No API key - add in Settings tab';st.style.color=k?'var(--green)':'var(--text3)';}
+  }catch(e){}
+}
+
+function triggerScan(){
+  const k=localStorage.getItem('forge_api_key')||'';
+  if(!k||!k.startsWith('sk-ant')){
+    alert('Add your Anthropic API key in the Settings tab first.\n\nGet a free key at console.anthropic.com');
+    showTab('cfg');
+    return;
+  }
+  document.getElementById('watch-file-input').click();
+}
+
+async function handleWatchImage(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const statusEl=document.getElementById('scan-status');
+  const resultEl=document.getElementById('scan-result');
+  statusEl.style.display='block';
+  resultEl.style.display='none';
+  statusEl.innerHTML='<div style="color:var(--blue);font-size:13px">Reading your Watch data...</div>';
+
+  try{
+    const base64=await new Promise((res,rej)=>{
+      const reader=new FileReader();
+      reader.onload=()=>res(reader.result.split(',')[1]);
+      reader.onerror=()=>rej(new Error('Failed to read image'));
+      reader.readAsDataURL(file);
+    });
+
+    const apiKey=localStorage.getItem('forge_api_key')||'';
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:600,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:base64}},
+            {type:'text',text:'This is an Apple Watch or iPhone Fitness app workout summary. Extract every visible stat and return ONLY a JSON object with no extra text:\n{"date":"string or null","workout_type":"string or null","duration":"string like 42:19 or null","active_calories":number_or_null,"total_calories":number_or_null,"avg_hr":number_or_null,"hr_range":"string like 71-146 or null","start_time":"string or null","end_time":"string or null"}\nUse null for anything not shown.'}
+          ]
+        }]
+      })
+    });
+
+    if(!resp.ok){const e=await resp.json();throw new Error(e.error?.message||'API error '+resp.status);}
+    const data=await resp.json();
+    const raw=data.content[0].text.trim().replace(/```json|```/g,'').trim();
+    let parsed;
+    try{parsed=JSON.parse(raw);}catch(e){throw new Error('Could not read image data - try a clearer screenshot');}
+
+    ST.lastWatchScan={...parsed,scannedAt:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})};
+    save();
+
+    statusEl.style.display='none';
+    resultEl.style.display='block';
+
+    const fields=[
+      {k:'date',l:'Date'},{k:'workout_type',l:'Workout'},{k:'start_time',l:'Start'},{k:'end_time',l:'End'},
+      {k:'duration',l:'Duration'},{k:'active_calories',l:'Active cal'},{k:'total_calories',l:'Total cal'},
+      {k:'avg_hr',l:'Avg HR'},{k:'hr_range',l:'HR range'}
+    ];
+    let html='<div class="scan-result"><div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.8px">Scan complete</div>';
+    fields.forEach(f=>{
+      if(parsed[f.k]!==null&&parsed[f.k]!==undefined){
+        const v=f.k==='avg_hr'?parsed[f.k]+' bpm':(f.k==='active_calories'||f.k==='total_calories')?parsed[f.k]+' cal':parsed[f.k];
+        html+='<div class="scan-result-row"><span class="scan-result-label">'+f.l+'</span><span class="scan-result-val">'+v+'</span></div>';
+      }
+    });
+    html+='<button onclick="confirmWatchLog()" class="btn-primary" style="width:100%;margin-top:12px;font-size:13px">Save to Dashboard</button></div>';
+    resultEl.innerHTML=html;
+
+  }catch(err){
+    statusEl.innerHTML='<div style="color:var(--red);font-size:12px">Error: '+err.message+'</div><div style="color:var(--text3);font-size:11px;margin-top:4px">Check your API key in Settings and try again.</div>';
+  }
+  event.target.value='';
+}
+
+function confirmWatchLog(){
+  const s=ST.lastWatchScan;if(!s)return;
+  const wcd=document.getElementById('watch-card-dynamic');
+  if(wcd){
+    wcd.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center">'
+      +'<div><div style="font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:0.8px">Apple Watch'+(s.date?' - '+s.date:'')+'</div>'
+      +'<div style="font-size:14px;font-weight:600;margin-top:2px">'+(s.workout_type||'Workout')+'</div>'
+      +(s.start_time||s.duration?'<div style="font-size:10px;color:var(--text3);margin-top:1px">'+(s.start_time||'')+''+(s.end_time?' to '+s.end_time:'')+(s.duration?' - '+s.duration:'')+'</div>':'')
+      +'</div><div style="text-align:right"><div style="font-size:22px;font-weight:700;color:var(--green)">'+(s.active_calories||'--')+'</div>'
+      +'<div style="font-size:9px;color:var(--text3)">ACTIVE CAL</div></div></div>'
+      +'<div class="watch-stats"><div><div class="ws-val">'+(s.total_calories||'--')+'</div><div class="ws-lbl">Total cal</div></div>'
+      +'<div><div class="ws-val">'+(s.avg_hr?s.avg_hr+' bpm':'--')+'</div><div class="ws-lbl">Avg HR</div></div>'
+      +'<div><div class="ws-val">'+(s.hr_range||'--')+'</div><div class="ws-lbl">HR range</div></div></div>';
+  }
+  document.getElementById('scan-result').style.display='none';
+  document.getElementById('scan-status').style.display='block';
+  document.getElementById('scan-status').innerHTML='<div style="color:var(--green);font-size:13px">Workout saved to Dashboard!</div>';
+  setTimeout(()=>{document.getElementById('scan-status').style.display='none';},2500);
+}
+
 renderDash();
+loadApiKey();
 </script>
 </body>
 </html>
