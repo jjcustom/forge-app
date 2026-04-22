@@ -203,7 +203,7 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 .sched-badge{font-size:10px;padding:2px 8px;border-radius:10px;flex-shrink:0}
 
 /* ── REST TIMER ── */
-.rest-bar{position:fixed;top:0;left:0;right:0;z-index:999;background:#0a0a0b;border-bottom:3px solid var(--blue);padding:0;transform:translateY(-100%);transition:transform 0.3s ease;pointer-events:none}
+.rest-bar{position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(10,10,11,0.97);border-bottom:3px solid var(--blue);padding:0;transform:translateY(-100%);transition:transform 0.25s ease;pointer-events:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .rest-bar.active{transform:translateY(0);pointer-events:all}
 .rest-bar-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 8px}
 .rest-timer-num{font-size:42px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--blue);line-height:1;letter-spacing:-1px}
@@ -217,9 +217,49 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 .rest-skip-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:11px;font-family:inherit;padding:6px 12px;cursor:pointer;margin-left:8px;flex-shrink:0}
 .rest-add-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:11px;font-family:inherit;padding:6px 10px;cursor:pointer;flex-shrink:0}
 .rest-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--blue);background:var(--blue-dim);border:1px solid rgba(59,130,246,0.3);border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+
+/* ── ADD EXERCISE DROPDOWN ── */
+.add-ex-wrap{padding:10px 14px;border-top:1px solid var(--border)}
+.add-ex-toggle{display:flex;align-items:center;gap:8px;background:transparent;border:1px dashed var(--border2);border-radius:10px;color:var(--text3);font-size:12px;font-family:inherit;padding:10px 14px;width:100%;cursor:pointer;transition:all 0.2s}
+.add-ex-toggle:active{background:var(--surface2)}
+.add-ex-toggle.open{border-color:var(--blue);color:var(--blue);background:var(--blue-dim)}
+.add-ex-panel{display:none;margin-top:8px}
+.add-ex-panel.open{display:block}
+.add-ex-group{margin-bottom:8px}
+.add-ex-group-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px}
+.add-ex-select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;padding:8px 10px;margin-bottom:6px}
+.add-ex-btn{background:var(--blue);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;font-family:inherit;padding:9px;width:100%;cursor:pointer}
+.custom-ex-row{display:flex;gap:6px;margin-bottom:6px}
+.custom-ex-inp{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;padding:8px 10px}
+.added-ex-row{background:rgba(59,130,246,0.06);border-left:3px solid var(--blue)}
+
+.ex-skip-btn{background:transparent;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:8px;-webkit-tap-highlight-color:rgba(255,255,255,0.1)}
+.ex-skip-btn:active{background:var(--surface3);color:var(--red)}
+
+/* ── CONFIRM MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;display:flex;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal-sheet{background:var(--surface);border-radius:18px 18px 0 0;padding:20px 16px 32px;width:100%;max-width:500px;transform:translateY(100%);transition:transform 0.25s ease}
+.modal-overlay.show .modal-sheet{transform:translateY(0)}
+.modal-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;text-align:center}
+.modal-sub{font-size:12px;color:var(--text2);text-align:center;margin-bottom:20px;line-height:1.5}
+.modal-actions{display:flex;flex-direction:column;gap:8px}
+.modal-btn-red{background:var(--red-dim);border:1px solid var(--red);border-radius:12px;color:var(--red);font-size:14px;font-weight:600;font-family:inherit;padding:14px;cursor:pointer;width:100%}
+.modal-btn-cancel{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;color:var(--text2);font-size:14px;font-weight:600;font-family:inherit;padding:14px;cursor:pointer;width:100%}
 </style>
 </head>
 <body>
+
+<div class="modal-overlay" id="skip-modal" onclick="closeSkipModal()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-title" id="skip-modal-title">Remove exercise?</div>
+    <div class="modal-sub" id="skip-modal-sub">This exercise will be hidden from today's workout. Tap Restore to bring it back.</div>
+    <div class="modal-actions">
+      <button class="modal-btn-red" id="skip-modal-confirm" onclick="doSkip()">Remove from today</button>
+      <button class="modal-btn-cancel" onclick="closeSkipModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <div class="rest-bar" id="rest-bar">
   <div class="rest-bar-inner">
@@ -429,6 +469,51 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 </div>
 
 <script>
+
+const EX_LIBRARY = {
+  'Compound / Full Body': [
+    'Barbell Romanian deadlift','Barbell deadlift','Barbell bent-over row','Barbell power clean',
+    'KB swing','KB goblet squat','Barbell box squat','Barbell squat to parallel',
+    'Ring row','Weighted ring pull-up','Barbell hip thrust','Glute bridge floor',
+    'DB walking lunges','Box step-up DB in hands','DB Bulgarian split squat',
+  ],
+  'Chest': [
+    'Barbell bench press','Incline DB press','DB flat press','Close-grip barbell press',
+    'Push-up','Close-grip push-up','Plyo box tricep dip',
+  ],
+  'Shoulders': [
+    'DB shoulder press','DB Arnold press','Seated DB shoulder press',
+    'Cable lateral raise','DB lateral raise','Cable rear delt fly',
+    'DB rear delt fly bent-over','Cable face pull','DB reverse fly standing',
+    'Barbell push press',
+  ],
+  'Triceps': [
+    'Cable tricep pushdown straight bar','Cable tricep pushdown rope',
+    'Cable overhead tricep extension','EZ bar skull crusher',
+    'DB overhead tricep extension','Tricep bench dip','DB tricep kickback',
+  ],
+  'Biceps': [
+    'Cable bicep curl','EZ bar bicep curl','DB hammer curl',
+    'Cable hammer curl','Incline DB curl','EZ bar preacher curl bench as pad',
+  ],
+  'Back / Lats': [
+    'Straight arm lat pulldown','DB single-arm row','Chest-supported DB row',
+    'Barbell bent-over row heavier','DB shrug','Nordic curl negative',
+  ],
+  'Legs / Glutes': [
+    'Barbell Romanian deadlift','Barbell RDL heavier','Single-leg RDL with DB',
+    'Single-leg RDL bodyweight','Barbell hip thrust','Glute bridge floor',
+    'KB goblet squat','DB goblet squat heavier','Box step-up controlled',
+    'Standing calf raise','Single-leg calf raise','DB walking lunges',
+    'DB Bulgarian split squat','Nordic curl negative','Barbell box squat',
+  ],
+  'Rehab / Accessory': [
+    'Terminal knee extension TKE','Straight leg raise SLR','Clamshell',
+    'Glute bridge','VMO quad set','Ankle pump and circles',
+    'Standing hip abduction','Heel slide','Dead bug','Plank',
+  ],
+};
+
 const SUGGEST={
   "Barbell bench press":{wt:155,reps:10},"Incline DB press":{wt:55,reps:12},"DB shoulder press":{wt:50,reps:11},
   "DB lateral raise":{wt:20,reps:15},"DB rear delt fly bent-over":{wt:15,reps:15},"Tricep bench dip":{wt:10,reps:18},
@@ -446,7 +531,16 @@ const SUGGEST={
   "Box step-up controlled":{wt:0,reps:8},"Standing calf raise":{wt:0,reps:18},
   "DB walking lunges":{wt:35,reps:12},"DB Bulgarian split squat":{wt:35,reps:8},
   "Single-leg calf raise":{wt:0,reps:15},"Nordic curl negative":{wt:0,reps:5},
-  "Barbell squat to parallel":{wt:125,reps:7}
+  "Barbell squat to parallel":{wt:125,reps:7},
+  "Cable lateral raise":{wt:15,reps:12},
+  "Cable rear delt fly":{wt:12,reps:15},
+  "Cable tricep pushdown straight bar":{wt:40,reps:12},
+  "Cable tricep pushdown rope":{wt:35,reps:12},
+  "Cable overhead tricep extension":{wt:30,reps:12},
+  "Cable face pull":{wt:25,reps:15},
+  "Cable bicep curl":{wt:40,reps:12},
+  "Cable hammer curl":{wt:30,reps:12},
+  "Straight arm lat pulldown":{wt:35,reps:12}
 };
 
 const PH=[
@@ -488,7 +582,7 @@ const PH=[
       {n:"Standing calf raise",eq:"Barbell or BW",sets:3,reps:"15-20",m:null},
       {n:"Knee rehab circuit",eq:"Light band+mat",sets:1,reps:"See rehab tab",m:null},
     ]},
-    {day:"Sunday",type:"Push",name:"Push 2 - Heavy Chest, Shoulder Detail and Arms",color:"#3b82f6",
+    {day:"Saturday",type:"Push",name:"Push 2 - Heavy Chest, Shoulder Detail and Arms",color:"#3b82f6",
      cardio:"Assault bike - 15 min moderate pace",
      metcon:{type:"For time",desc:"3 rounds: 12 KB swings, 10 push-ups, 15 cal bike",wk1best:""},
      exercises:[
@@ -526,24 +620,24 @@ const PH=[
     ]},
   ]},
   {label:"Intensify",color:"#f59e0b",weeks:[3,4],days:[
-    {day:"Wednesday",type:"Push",name:"Push 1 - Intensify",color:"#3b82f6",cardio:"Row or bike - 15 min increased intensity",metcon:{type:"For time",desc:"3 rounds: 12 KB swings, 10 push-ups, 12 box jumps",wk1best:""},exercises:[
+    {day:"Wednesday",type:"Push",name:"Push 1 - Intensify + Cable",color:"#3b82f6",cardio:"Row or bike - 15 min increased intensity",metcon:{type:"For time",desc:"3 rounds: 12 KB swings, 10 push-ups, 200m row",wk1best:""},exercises:[
       {n:"Barbell bench press",eq:"Barbell+bench",sets:4,reps:"8-10",m:"compound"},
       {n:"Incline DB press",eq:"Adj DBs+bench",sets:4,reps:"10",m:"compound"},
       {n:"DB shoulder press",eq:"Adj DBs",sets:4,reps:"10-12",m:"shoulder"},
-      {n:"DB lateral raise",eq:"Adj DBs",sets:4,reps:"12-15",m:"shoulder",note:"Add weight vs weeks 1-2"},
-      {n:"DB rear delt fly bent-over",eq:"Adj DBs",sets:3,reps:"12",m:"shoulder"},
+      {n:"Cable lateral raise",eq:"Pulley+single handle",sets:4,reps:"12-15",m:"shoulder",note:"CABLE UPGRADE - constant tension full range beats DB lateral raise"},
+      {n:"Cable rear delt fly",eq:"Pulley+single handle",sets:3,reps:"12-15",m:"shoulder",note:"Cross-body cable - squeeze at full extension"},
       {n:"EZ bar skull crusher",eq:"EZ curl bar",sets:3,reps:"10-12",m:"tricep"},
-      {n:"Tricep bench dip heavier plate",eq:"Plyo box+plate",sets:3,reps:"12-15",m:"tricep"},
-      {n:"DB tricep kickback",eq:"Adj DBs",sets:3,reps:"12",m:"tricep"},
+      {n:"Cable tricep pushdown straight bar",eq:"Pulley+straight bar",sets:3,reps:"12-15",m:"tricep",note:"CABLE UPGRADE - constant tension crushes the tricep"},
+      {n:"Cable overhead tricep extension",eq:"Pulley+rope",sets:3,reps:"12",m:"tricep",note:"Rope attachment - best long head builder in the program"},
     ]},
-    {day:"Thursday",type:"Pull",name:"Pull 1 - Intensify",color:"#14b8a6",cardio:"Row 15 min - track 500m splits",metcon:{type:"For time",desc:"3 rounds: 12 DB chest-supported rows, 15 KB swings, 250m row",wk1best:""},exercises:[
+    {day:"Thursday",type:"Pull",name:"Pull 1 - Intensify + Cable",color:"#14b8a6",cardio:"Row 15 min - track 500m splits",metcon:{type:"For time",desc:"3 rounds: 12 DB chest-supported rows, 15 KB swings, 250m row",wk1best:""},exercises:[
       {n:"Barbell bent-over row",eq:"Barbell",sets:4,reps:"8-10",m:"compound"},
       {n:"DB single-arm row heavier",eq:"Adj DBs+bench",sets:4,reps:"10/side",m:"compound"},
       {n:"Weighted ring row",eq:"Gymnastic rings+plate",sets:3,reps:"10",m:"compound"},
-      {n:"DB rear delt fly bent-over",eq:"Adj DBs",sets:4,reps:"12",m:"shoulder"},
-      {n:"EZ bar bicep curl",eq:"EZ curl bar",sets:4,reps:"10-12",m:"bicep"},
-      {n:"DB hammer curl",eq:"Adj DBs",sets:3,reps:"12",m:"bicep"},
-      {n:"DB reverse fly standing",eq:"Adj DBs",sets:3,reps:"15",m:"shoulder"},
+      {n:"Cable face pull",eq:"Pulley+rope",sets:4,reps:"15",m:"shoulder",note:"CABLE UPGRADE - rope at face height pull apart - rotator cuff + rear delt"},
+      {n:"Cable bicep curl",eq:"Pulley+straight bar",sets:4,reps:"10-12",m:"bicep",note:"CABLE UPGRADE - constant tension peak contraction"},
+      {n:"Cable hammer curl",eq:"Pulley+rope",sets:3,reps:"12",m:"bicep",note:"Rope neutral grip - hits brachialis harder than DB"},
+      {n:"Straight arm lat pulldown",eq:"Pulley+straight bar",sets:3,reps:"12-15",m:"compound",note:"CABLE UPGRADE - best lat isolation in the program - arms straight pull down to hips"},
     ]},
     {day:"Friday",type:"Legs",name:"Legs 1 - Intensify + Box Squat",color:"#a855f7",cardio:"Assault bike - 12 min moderate",metcon:{type:"AMRAP 15 min",desc:"12 KB swings, 10 box step-ups, 8 DB goblet squats, 200m row",wk1best:""},exercises:[
       {n:"DB goblet squat heavier",eq:"Adj DBs",sets:4,reps:"10",m:"squat",note:"WK 3-4: Heavier DB increase depth gradually"},
@@ -554,23 +648,23 @@ const PH=[
       {n:"Nordic curl negative",eq:"Pull-up rig",sets:3,reps:"5",m:"compound",note:"Eccentric only - builds knee resilience"},
       {n:"Knee rehab circuit",eq:"Light band+mat",sets:1,reps:"See rehab tab",m:null},
     ]},
-    {day:"Sunday",type:"Push",name:"Push 2 - Intensify",color:"#3b82f6",cardio:"Assault bike - 15 min 30 sec hard 30 sec easy",metcon:{type:"For time",desc:"3 rounds: 15 KB swings, 12 push-ups, 20 cal bike",wk1best:""},exercises:[
+    {day:"Saturday",type:"Push",name:"Push 2 - Intensify + Cable",color:"#3b82f6",cardio:"Assault bike - 15 min 30 sec hard 30 sec easy",metcon:{type:"For time",desc:"3 rounds: 15 KB swings, 12 push-ups, 20 cal bike",wk1best:""},exercises:[
       {n:"Barbell bench press heavier",eq:"Barbell+bench",sets:5,reps:"6-8",m:"compound"},
       {n:"DB incline press",eq:"Adj DBs+bench",sets:4,reps:"8-10",m:"compound"},
-      {n:"DB Arnold press",eq:"Adj DBs",sets:4,reps:"10",m:"shoulder"},
-      {n:"DB lateral raise drop set",eq:"Adj DBs",sets:3,reps:"12 heavy then 12 light",m:"shoulder"},
+      {n:"DB Arnold press",eq:"Adj DBs",sets:4,reps:"10",m:"shoulder",note:"Palms in at bottom rotate out at top"},
+      {n:"Cable lateral raise",eq:"Pulley+single handle",sets:4,reps:"12 each side",m:"shoulder",note:"Single arm - full constant tension through entire rep"},
       {n:"EZ bar skull crusher",eq:"EZ curl bar",sets:4,reps:"8-10",m:"tricep"},
-      {n:"Plyo box tricep dip",eq:"Plyo box",sets:3,reps:"max",m:"tricep"},
-      {n:"DB overhead tricep extension",eq:"Adj DBs",sets:3,reps:"12",m:"tricep"},
+      {n:"Cable tricep pushdown rope",eq:"Pulley+rope",sets:4,reps:"12",m:"tricep",note:"Rope - split at bottom flare hands out for peak contraction"},
+      {n:"Cable overhead tricep extension",eq:"Pulley+rope",sets:3,reps:"12",m:"tricep",note:"Face away from pulley overhead - long head stretch"},
     ]},
-    {day:"Monday",type:"Pull",name:"Pull 2 - Intensify",color:"#14b8a6",cardio:"Walk/Run 20 min - 3 min run 1 min walk",metcon:{type:"AMRAP 15 min",desc:"10 ring rows, 15 KB swings, 12 DB hammer curls, 250m row",wk1best:""},exercises:[
+    {day:"Monday",type:"Pull",name:"Pull 2 - Intensify + Cable",color:"#14b8a6",cardio:"Walk/Run 20 min - 3 min run 1 min walk",metcon:{type:"AMRAP 15 min",desc:"10 ring rows, 15 KB swings, 12 cable curls, 250m row",wk1best:""},exercises:[
       {n:"Barbell deadlift heavier",eq:"Barbell",sets:4,reps:"5-6",m:"compound"},
       {n:"Barbell bent-over row heavier",eq:"Barbell",sets:5,reps:"6-8",m:"compound"},
       {n:"Weighted ring pull-up",eq:"Rings",sets:4,reps:"5-6",m:"compound"},
-      {n:"Incline DB curl",eq:"Adj DBs+bench",sets:4,reps:"10",m:"bicep"},
-      {n:"EZ bar preacher curl bench as pad",eq:"EZ curl bar+bench",sets:3,reps:"10-12",m:"bicep",note:"Arm over incline bench - isolates the peak"},
-      {n:"DB rear delt fly bent-over",eq:"Adj DBs",sets:3,reps:"12",m:"shoulder"},
-      {n:"DB shrug heavier",eq:"Adj DBs",sets:3,reps:"12",m:"compound"},
+      {n:"Straight arm lat pulldown",eq:"Pulley+straight bar",sets:3,reps:"12-15",m:"compound",note:"Arms locked straight - pure lat isolation"},
+      {n:"Cable bicep curl",eq:"Pulley+straight bar",sets:4,reps:"10-12",m:"bicep",note:"Constant tension - better peak than EZ bar"},
+      {n:"Cable face pull",eq:"Pulley+rope",sets:3,reps:"15",m:"shoulder",note:"Rope at face height - rear delt and rotator cuff"},
+      {n:"DB shrug heavier",eq:"Adj DBs",sets:3,reps:"12",m:"compound",note:"Slow hold at top for 2 sec"},
     ]},
     {day:"Tuesday",type:"Legs",name:"Legs 2 - Intensify + Box Squat",color:"#a855f7",cardio:"Walk/Run 25 min - 3 min run 1 min walk",metcon:{type:"AMRAP 15 min",desc:"10 barbell hip thrusts, 8 Bulgarian split squats each leg, 200m row",wk1best:""},exercises:[
       {n:"DB goblet squat heavier",eq:"Adj DBs",sets:3,reps:"10",m:"squat",note:"WK 3-4: Push depth further stay controlled"},
@@ -583,24 +677,24 @@ const PH=[
     ]},
   ]},
   {label:"Peak Volume",color:"#ef4444",weeks:[5,6],days:[
-    {day:"Wednesday",type:"Push",name:"Push 1 - Peak Volume",color:"#3b82f6",cardio:"Row 15 min or 20 min easy run",metcon:{type:"For time",desc:"4 rounds: 12 KB swings, 10 push-ups, 200m row",wk1best:""},exercises:[
+    {day:"Wednesday",type:"Push",name:"Push 1 - Peak Volume + Cable",color:"#3b82f6",cardio:"Row 15 min or 20 min easy run",metcon:{type:"For time",desc:"4 rounds: 12 KB swings, 10 push-ups, 200m row",wk1best:""},exercises:[
       {n:"Barbell bench press",eq:"Barbell+bench",sets:5,reps:"6-8",m:"compound"},
       {n:"Incline DB press",eq:"Adj DBs+bench",sets:4,reps:"8-10",m:"compound"},
       {n:"Seated DB shoulder press",eq:"Adj DBs+bench",sets:4,reps:"10",m:"shoulder",note:"Seated = pure isolation no leg drive"},
-      {n:"DB lateral raise drop set",eq:"Adj DBs",sets:4,reps:"12 heavy then 12 light",m:"shoulder"},
-      {n:"DB rear delt fly bent-over",eq:"Adj DBs",sets:3,reps:"12",m:"shoulder"},
+      {n:"Cable lateral raise",eq:"Pulley+single handle",sets:4,reps:"12 each side",m:"shoulder",note:"Go heavier than DB version - constant tension"},
+      {n:"Cable rear delt fly",eq:"Pulley+single handle",sets:3,reps:"15 each side",m:"shoulder",note:"Low pulley cross-body - best rear delt isolation"},
       {n:"EZ bar skull crusher",eq:"EZ curl bar",sets:4,reps:"8-10",m:"tricep"},
-      {n:"Plyo box tricep dip",eq:"Plyo box",sets:3,reps:"max",m:"tricep"},
-      {n:"DB tricep kickback",eq:"Adj DBs",sets:3,reps:"12",m:"tricep"},
+      {n:"Cable tricep pushdown rope",eq:"Pulley+rope",sets:4,reps:"12",m:"tricep",note:"Rope - split hands at bottom for max contraction"},
+      {n:"Cable overhead tricep extension",eq:"Pulley+rope",sets:3,reps:"10",m:"tricep",note:"Face away from pulley - long head fully stretched"},
     ]},
-    {day:"Thursday",type:"Pull",name:"Pull 1 - Peak Volume",color:"#14b8a6",cardio:"Row 20 min - track 500m splits beat last week",metcon:{type:"For time",desc:"4 rounds: 12 DB chest-supported rows, 15 KB swings, 250m row",wk1best:""},exercises:[
+    {day:"Thursday",type:"Pull",name:"Pull 1 - Peak Volume + Cable",color:"#14b8a6",cardio:"Row 20 min - track 500m splits beat last week",metcon:{type:"For time",desc:"4 rounds: 12 DB chest-supported rows, 15 KB swings, 250m row",wk1best:""},exercises:[
       {n:"Barbell bent-over row",eq:"Barbell",sets:5,reps:"6-8",m:"compound"},
       {n:"Chest-supported DB row",eq:"Adj DBs+bench",sets:4,reps:"10",m:"compound",note:"Bench at low incline - removes lower back fatigue"},
       {n:"Weighted ring pull-up",eq:"Rings",sets:4,reps:"max",m:"compound"},
-      {n:"DB rear delt fly bent-over",eq:"Adj DBs",sets:4,reps:"12",m:"shoulder"},
-      {n:"EZ bar bicep curl",eq:"EZ curl bar",sets:4,reps:"8-10",m:"bicep"},
-      {n:"DB hammer curl",eq:"Adj DBs",sets:3,reps:"10",m:"bicep"},
-      {n:"DB reverse fly standing",eq:"Adj DBs",sets:3,reps:"12",m:"shoulder"},
+      {n:"Straight arm lat pulldown",eq:"Pulley+straight bar",sets:4,reps:"12-15",m:"compound",note:"Arms straight locked - pull bar to hips - pure lat"},
+      {n:"Cable face pull",eq:"Pulley+rope",sets:4,reps:"15",m:"shoulder",note:"Rope at eye level - pull to forehead split hands apart"},
+      {n:"Cable bicep curl",eq:"Pulley+straight bar",sets:4,reps:"10-12",m:"bicep",note:"Lean slightly back - full stretch at bottom"},
+      {n:"Cable hammer curl",eq:"Pulley+rope",sets:3,reps:"12",m:"bicep",note:"Rope neutral grip - peaks the brachialis"},
     ]},
     {day:"Friday",type:"Legs",name:"Legs 1 - Peak Volume + Barbell Box Squat",color:"#a855f7",cardio:"Assault bike 12 min 20 sec max 40 sec easy",metcon:{type:"AMRAP 20 min",desc:"15 KB swings, 10 box squats, 10 box step-ups, 250m row",wk1best:""},exercises:[
       {n:"Barbell box squat heavier",eq:"Barbell+plyo box",sets:4,reps:"6-8",m:"squat",note:"WK 5-6: Load heavy box controls depth drive through heels"},
@@ -611,23 +705,24 @@ const PH=[
       {n:"Box step-up heavy",eq:"Plyo box+DBs",sets:3,reps:"10/leg",m:"compound"},
       {n:"Knee rehab circuit",eq:"Light band+mat",sets:1,reps:"See rehab tab",m:null},
     ]},
-    {day:"Sunday",type:"Push",name:"Push 2 - Peak Volume",color:"#3b82f6",cardio:"Assault bike 20 min 1 min hard 1 min easy",metcon:{type:"For time",desc:"4 rounds: 15 KB swings, 12 push-ups, 25 cal bike",wk1best:""},exercises:[
+    {day:"Saturday",type:"Push",name:"Push 2 - Peak Volume + Cable",color:"#3b82f6",cardio:"Assault bike 20 min 1 min hard 1 min easy",metcon:{type:"For time",desc:"4 rounds: 15 KB swings, 12 push-ups, 25 cal bike",wk1best:""},exercises:[
       {n:"Barbell bench press near peak",eq:"Barbell+bench",sets:5,reps:"5-6",m:"compound"},
       {n:"DB incline press",eq:"Adj DBs+bench",sets:4,reps:"8",m:"compound"},
       {n:"DB Arnold press",eq:"Adj DBs",sets:4,reps:"10",m:"shoulder",note:"Full range palms in at bottom out at top"},
-      {n:"DB lateral raise drop set",eq:"Adj DBs",sets:4,reps:"10 heavy plus 15 light",m:"shoulder"},
+      {n:"Cable lateral raise",eq:"Pulley+single handle",sets:4,reps:"12 each side",m:"shoulder",note:"Max weight you can control - beat last week"},
+      {n:"Cable rear delt fly",eq:"Pulley+single handle",sets:3,reps:"15 each side",m:"shoulder",note:"Low pulley cross-body - squeeze at full extension"},
       {n:"EZ bar skull crusher",eq:"EZ curl bar",sets:4,reps:"8",m:"tricep"},
-      {n:"Close-grip barbell press",eq:"Barbell+bench",sets:3,reps:"8-10",m:"tricep"},
-      {n:"DB overhead tricep extension",eq:"Adj DBs",sets:3,reps:"10",m:"tricep"},
+      {n:"Cable tricep pushdown straight bar",eq:"Pulley+straight bar",sets:4,reps:"10-12",m:"tricep",note:"Heavy as possible with full lockout"},
+      {n:"Cable overhead tricep extension",eq:"Pulley+rope",sets:4,reps:"10",m:"tricep",note:"Face away - overhead stretch - destroys the long head"},
     ]},
-    {day:"Monday",type:"Pull",name:"Pull 2 - Peak Volume",color:"#14b8a6",cardio:"Run 25 min easy continuous",metcon:{type:"AMRAP 20 min",desc:"10 ring rows, 15 KB swings, 10 incline DB curls, 300m row",wk1best:""},exercises:[
+    {day:"Monday",type:"Pull",name:"Pull 2 - Peak Volume + Cable",color:"#14b8a6",cardio:"Run 25 min easy continuous",metcon:{type:"AMRAP 20 min",desc:"10 ring rows, 15 KB swings, 10 cable curls, 300m row",wk1best:""},exercises:[
       {n:"Barbell deadlift heavy",eq:"Barbell",sets:5,reps:"4-5",m:"compound"},
       {n:"Barbell bent-over row heavy",eq:"Barbell",sets:5,reps:"5-6",m:"compound"},
       {n:"Weighted ring pull-up",eq:"Rings",sets:4,reps:"5",m:"compound"},
-      {n:"Incline DB curl",eq:"Adj DBs+bench",sets:4,reps:"10",m:"bicep"},
-      {n:"EZ bar preacher curl",eq:"EZ curl bar+bench",sets:4,reps:"10",m:"bicep"},
-      {n:"DB rear delt fly bent-over",eq:"Adj DBs",sets:3,reps:"12",m:"shoulder"},
-      {n:"DB shrug heavy",eq:"Adj DBs",sets:3,reps:"12",m:"compound"},
+      {n:"Straight arm lat pulldown",eq:"Pulley+straight bar",sets:4,reps:"12",m:"compound",note:"Heavy - arms locked - pull to hips - feel the lat stretch"},
+      {n:"Cable bicep curl",eq:"Pulley+straight bar",sets:4,reps:"10",m:"bicep",note:"Go heavier than week 3-4"},
+      {n:"Cable hammer curl",eq:"Pulley+rope",sets:3,reps:"12",m:"bicep",note:"Rope neutral grip superset with cable curl"},
+      {n:"Cable face pull",eq:"Pulley+rope",sets:4,reps:"15",m:"shoulder",note:"Heavy weight - pull rope apart at face height"},
     ]},
     {day:"Tuesday",type:"Legs",name:"Legs 2 - Peak Volume + Barbell Box Squat",color:"#a855f7",cardio:"Run 30-35 min easy long slow distance",metcon:{type:"AMRAP 20 min",desc:"10 barbell hip thrusts, 8 Bulgarian split squats each leg, 8 box squats, 200m row",wk1best:""},exercises:[
       {n:"Barbell box squat heavier",eq:"Barbell+plyo box",sets:4,reps:"6-8",m:"squat",note:"WK 5-6: Match or beat Wednesday weight - own this movement"},
@@ -640,24 +735,24 @@ const PH=[
     ]},
   ]},
   {label:"Peak and Shred",color:"#a855f7",weeks:[7,8],days:[
-    {day:"Wednesday",type:"Push",name:"Push 1 - Peak and Shred",color:"#3b82f6",cardio:"Row or run 20 min match or beat last week",metcon:{type:"For time",desc:"5 rounds: 12 KB swings, 10 push-ups, 200m row",wk1best:""},exercises:[
+    {day:"Wednesday",type:"Push",name:"Push 1 - Peak and Shred + Cable",color:"#3b82f6",cardio:"Row or run 20 min match or beat last week",metcon:{type:"For time",desc:"5 rounds: 12 KB swings, 10 push-ups, 200m row",wk1best:""},exercises:[
       {n:"Barbell bench press near 1RM",eq:"Barbell+bench",sets:5,reps:"3-5",m:"compound"},
       {n:"Incline DB press heavy",eq:"Adj DBs+bench",sets:4,reps:"8",m:"compound"},
-      {n:"DB Arnold press",eq:"Adj DBs",sets:4,reps:"10",m:"shoulder"},
-      {n:"DB lateral raise drop set",eq:"Adj DBs",sets:4,reps:"10 heavy plus 15 light",m:"shoulder"},
-      {n:"DB rear delt fly bent-over",eq:"Adj DBs",sets:3,reps:"12",m:"shoulder"},
+      {n:"DB Arnold press",eq:"Adj DBs",sets:4,reps:"10",m:"shoulder",note:"Peak shoulder detail - own this movement"},
+      {n:"Cable lateral raise",eq:"Pulley+single handle",sets:5,reps:"12 each side",m:"shoulder",note:"Heaviest cable lateral raise yet - full ROM constant tension"},
+      {n:"Cable rear delt fly",eq:"Pulley+single handle",sets:4,reps:"15 each side",m:"shoulder",note:"Low pulley - rear delt peak contraction"},
       {n:"EZ bar skull crusher",eq:"EZ curl bar",sets:4,reps:"8-10",m:"tricep"},
-      {n:"Plyo box tricep dip",eq:"Plyo box",sets:4,reps:"max",m:"tricep"},
-      {n:"DB tricep kickback",eq:"Adj DBs",sets:3,reps:"12",m:"tricep"},
+      {n:"Cable tricep pushdown rope",eq:"Pulley+rope",sets:5,reps:"12",m:"tricep",note:"Heaviest pushdown yet - split at bottom flare hands"},
+      {n:"Cable overhead tricep extension",eq:"Pulley+rope",sets:4,reps:"10",m:"tricep",note:"Long head finisher - full stretch overhead"},
     ]},
-    {day:"Thursday",type:"Pull",name:"Pull 1 - Peak and Shred",color:"#14b8a6",cardio:"Row 20 min all-out effort",metcon:{type:"For time",desc:"5 rounds: 10 ring rows, 15 KB swings, 200m row",wk1best:""},exercises:[
+    {day:"Thursday",type:"Pull",name:"Pull 1 - Peak and Shred + Cable",color:"#14b8a6",cardio:"Row 20 min all-out effort",metcon:{type:"For time",desc:"5 rounds: 10 ring rows, 15 KB swings, 200m row",wk1best:""},exercises:[
       {n:"Barbell bent-over row near max",eq:"Barbell",sets:5,reps:"4-5",m:"compound"},
       {n:"Chest-supported DB row heavy",eq:"Adj DBs+bench",sets:4,reps:"8",m:"compound"},
       {n:"Weighted ring pull-up",eq:"Rings",sets:5,reps:"5",m:"compound"},
-      {n:"DB rear delt fly bent-over",eq:"Adj DBs",sets:4,reps:"12",m:"shoulder"},
-      {n:"Incline DB curl",eq:"Adj DBs+bench",sets:4,reps:"10",m:"bicep"},
-      {n:"EZ bar preacher curl",eq:"EZ curl bar+bench",sets:4,reps:"10",m:"bicep"},
-      {n:"DB reverse fly standing",eq:"Adj DBs",sets:3,reps:"12",m:"shoulder"},
+      {n:"Straight arm lat pulldown",eq:"Pulley+straight bar",sets:5,reps:"12",m:"compound",note:"Heaviest yet - arms locked straight - pure lat peak"},
+      {n:"Cable face pull",eq:"Pulley+rope",sets:4,reps:"15",m:"shoulder",note:"Heavy rope face pull - shoulder health + rear delt"},
+      {n:"Cable bicep curl",eq:"Pulley+straight bar",sets:5,reps:"10",m:"bicep",note:"Peak week - go as heavy as form allows"},
+      {n:"Cable hammer curl",eq:"Pulley+rope",sets:4,reps:"12",m:"bicep",note:"Rope superset after cable curl - no rest"},
     ]},
     {day:"Friday",type:"Legs",name:"Legs 1 - Peak and Shred + Barbell Squat",color:"#a855f7",cardio:"Assault bike 15 min max effort intervals",metcon:{type:"AMRAP 25 min",desc:"20 cal bike, 15 KB swings, 10 barbell squats, 12 box step-ups",wk1best:""},exercises:[
       {n:"Barbell squat to parallel",eq:"Barbell+rig",sets:4,reps:"6-8",m:"squat",note:"WK 7-8: First real squat - stop at thighs parallel no below parallel yet"},
@@ -668,23 +763,24 @@ const PH=[
       {n:"Box step-up heavy",eq:"Plyo box+DBs",sets:3,reps:"10/leg",m:"compound"},
       {n:"Knee rehab circuit",eq:"Light band+mat",sets:1,reps:"See rehab tab",m:null},
     ]},
-    {day:"Sunday",type:"Push",name:"Push 2 - Peak and Shred",color:"#3b82f6",cardio:"Assault bike 20 min AMRAP max calories",metcon:{type:"For time",desc:"5 rounds: 15 KB swings, 12 push-ups, 25 cal bike",wk1best:""},exercises:[
+    {day:"Saturday",type:"Push",name:"Push 2 - Peak and Shred + Cable",color:"#3b82f6",cardio:"Assault bike 20 min AMRAP max calories",metcon:{type:"For time",desc:"5 rounds: 15 KB swings, 12 push-ups, 25 cal bike",wk1best:""},exercises:[
       {n:"Barbell bench press near 1RM",eq:"Barbell+bench",sets:5,reps:"3-4",m:"compound"},
       {n:"DB incline press heavy",eq:"Adj DBs+bench",sets:4,reps:"6-8",m:"compound"},
-      {n:"DB Arnold press",eq:"Adj DBs",sets:4,reps:"8",m:"shoulder"},
-      {n:"DB lateral raise drop set",eq:"Adj DBs",sets:4,reps:"10 heavy plus 15 light",m:"shoulder"},
+      {n:"DB Arnold press",eq:"Adj DBs",sets:4,reps:"8",m:"shoulder",note:"Peak week - own every rep"},
+      {n:"Cable lateral raise",eq:"Pulley+single handle",sets:5,reps:"12 each side",m:"shoulder",note:"Program peak - heaviest cable lateral raise"},
+      {n:"Cable rear delt fly",eq:"Pulley+single handle",sets:4,reps:"15 each side",m:"shoulder",note:"Low pulley - maximum rear delt isolation"},
       {n:"EZ bar skull crusher",eq:"EZ curl bar",sets:5,reps:"6-8",m:"tricep"},
-      {n:"Close-grip barbell press",eq:"Barbell+bench",sets:3,reps:"8",m:"tricep"},
-      {n:"DB overhead tricep extension",eq:"Adj DBs",sets:3,reps:"10",m:"tricep"},
+      {n:"Cable tricep pushdown rope",eq:"Pulley+rope",sets:5,reps:"10-12",m:"tricep",note:"Peak program - heaviest pushdown - split at bottom"},
+      {n:"Cable overhead tricep extension",eq:"Pulley+rope",sets:4,reps:"10",m:"tricep",note:"Final long head session of the program"},
     ]},
-    {day:"Monday",type:"Pull",name:"Pull 2 - Peak and Shred",color:"#14b8a6",cardio:"Run 35-40 min easy half marathon prep",metcon:{type:"AMRAP 25 min",desc:"10 ring rows, 15 KB swings, 12 incline DB curls, 300m row",wk1best:""},exercises:[
+    {day:"Monday",type:"Pull",name:"Pull 2 - Peak and Shred + Cable",color:"#14b8a6",cardio:"Run 35-40 min easy half marathon prep",metcon:{type:"AMRAP 25 min",desc:"10 ring rows, 15 KB swings, 12 cable curls, 300m row",wk1best:""},exercises:[
       {n:"Barbell deadlift near 1RM",eq:"Barbell",sets:5,reps:"3",m:"compound"},
       {n:"Barbell bent-over row heavy",eq:"Barbell",sets:5,reps:"4-5",m:"compound"},
       {n:"Weighted ring pull-up",eq:"Rings",sets:5,reps:"max",m:"compound"},
-      {n:"Incline DB curl heavy",eq:"Adj DBs+bench",sets:4,reps:"8-10",m:"bicep"},
-      {n:"EZ bar preacher curl",eq:"EZ curl bar+bench",sets:4,reps:"8-10",m:"bicep"},
-      {n:"DB rear delt fly bent-over",eq:"Adj DBs",sets:3,reps:"12",m:"shoulder"},
-      {n:"DB shrug heavy",eq:"Adj DBs",sets:3,reps:"12",m:"compound"},
+      {n:"Straight arm lat pulldown",eq:"Pulley+straight bar",sets:5,reps:"12",m:"compound",note:"Program peak lat isolation - heaviest yet"},
+      {n:"Cable bicep curl",eq:"Pulley+straight bar",sets:5,reps:"10",m:"bicep",note:"Peak bicep session - constant tension to failure"},
+      {n:"Cable hammer curl",eq:"Pulley+rope",sets:4,reps:"12",m:"bicep",note:"Rope - neutral grip - superset after cable curl"},
+      {n:"Cable face pull",eq:"Pulley+rope",sets:4,reps:"15",m:"shoulder",note:"Final face pull of program - heavy rope at eye level"},
     ]},
     {day:"Tuesday",type:"Legs",name:"Legs 2 - Peak and Shred + Barbell Squat",color:"#a855f7",cardio:"Long run 45-60 min easy half marathon base",metcon:{type:"AMRAP 25 min",desc:"10 barbell squats, 15 KB swings, 10 Bulgarian split squats each leg, 200m row",wk1best:""},exercises:[
       {n:"Barbell squat to parallel",eq:"Barbell+rig",sets:4,reps:"6-8",m:"squat",note:"WK 7-8: Add weight if knee feels strong - listen to your body"},
@@ -745,6 +841,13 @@ const D5={
   "Friday__Barbell Romanian deadlift":[{wt:"165",reps:"12"},{wt:"175",reps:"12"},{wt:"185",reps:"10"},{wt:"185",reps:"10"}],
   "Friday__Barbell hip thrust":[{wt:"215",reps:"12"},{wt:"225",reps:"12"},{wt:"225",reps:"12"},{wt:"225",reps:"10"}],
   "Friday__Single-leg RDL bodyweight":[{wt:"0",reps:"10"},{wt:"0",reps:"10"},{wt:"0",reps:"10"}],
+};
+
+const D6={
+  "Tuesday__DB goblet squat heavier":[{wt:"50",reps:"12"},{wt:"50",reps:"15"},{wt:"50",reps:"15"}],
+  "Tuesday__Barbell box squat":[{wt:"135",reps:"8"},{wt:"135",reps:"8"},{wt:"135",reps:"8"},{wt:"135",reps:"8"}],
+  "Tuesday__Barbell hip thrust heavier":[{wt:"225",reps:"12"},{wt:"225",reps:"12"},{wt:"235",reps:"12"},{wt:"235",reps:"12"},{wt:"235",reps:"12"}],
+  "Tuesday__Single-leg RDL with DB":[{wt:"185",reps:"10"},{wt:"195",reps:"8"},{wt:"205",reps:"8"},{wt:"205",reps:"10"}],
 };
 
 const MEALS=[
@@ -868,10 +971,12 @@ function injectData(){
   inj(D3,'done__1__Tuesday','Tuesday','Apr 14',1);
   inj(D4,'done__2__Thursday','Thursday','Apr 16',2);
   inj(D5,'done__2__Friday','Friday','Apr 17',2);
+  inj(D6,'done__3__Tuesday','Tuesday','Apr 21',3);
   if(!ST.wd['metcon__1__Thursday']){ST.wd['metcon__1__Thursday']='11:08';ch=true;}
   if(!ST.wd['metcon__1__Tuesday']){ST.wd['metcon__1__Tuesday']='4 rounds - 20 SA snatch / 15 KB swings / 200m row';ch=true;}
   if(!ST.wd['metcon__2__Thursday']){ST.wd['metcon__2__Thursday']='9:11';ch=true;}
   if(!ST.wd['metcon__2__Friday']){ST.wd['metcon__2__Friday']='20 min AMRAP - KB swings / devils press / row';ch=true;}
+  if(!ST.wd['metcon__3__Tuesday']){ST.wd['metcon__3__Tuesday']='AMRAP 20 min - KB swings / push-ups / row';ch=true;}
   if(!ST.watchHistory||!ST.watchHistory.length){
     ST.watchHistory=[
       {date:'Apr 8',type:'str',label:'Push 1 - Chest Shoulders Triceps',start:'5:54 AM',end:'6:36 AM',duration:'42:19',activeCal:294,totalCal:382,avgHR:121,hrRange:'71-146'},
@@ -901,6 +1006,12 @@ function injectData(){
         {date:'Apr 17',type:'metcon',label:'Metcon Wk2 - KB swings devils press row',start:'7:27 AM',end:'7:47 AM',duration:'20:14',activeCal:232,totalCal:275,avgHR:130,hrRange:'81-152'}
       );ch=true;
     }
+    const hasApr21=ST.watchHistory.some(w=>w.date==='Apr 21');
+    if(!hasApr21){
+      ST.watchHistory.push(
+        {date:'Apr 21',type:'str',label:'Legs 2 Wk3 - Intensify Glutes Squat',start:'5:42 AM',end:'6:37 AM',duration:'55:39',activeCal:441,totalCal:556,avgHR:118,hrRange:'87-156'}
+      );ch=true;
+    }
   }
   if(ch)save();
 }
@@ -910,7 +1021,8 @@ function showTab(t){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+t+"'")));
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
-  if(t==='str')renderStr();if(t==='meals')renderMeals();if(t==='groc')renderGroc();
+  if(t==='str'){renderStr();requestWakeLock();}else{releaseWakeLock();}
+  if(t==='meals')renderMeals();if(t==='groc')renderGroc();
   if(t==='supp')renderSupps();if(t==='prog')renderProg();if(t==='rehab')renderRehab();if(t==='dash')renderDash();
 }
 
@@ -964,6 +1076,7 @@ function getSuggest(exName,day,setNum){
 }
 
 function renderStr(){
+  window._skipReg={};window._skipIdx=0;
   if(!ST.day){ST.day='Wednesday';}
   // Week bar
   const wkBar=document.getElementById('wk-bar');wkBar.innerHTML='';
@@ -976,28 +1089,84 @@ function renderStr(){
     const wi=i;b.onclick=()=>{ST.wk=wi;save();renderStr();};
     wkBar.appendChild(b);
   }
-  // Day bar
+  // Day bar - Mon through Fri fixed, Sat+Sun both = Weekend
   const dayBar=document.getElementById('day-bar');dayBar.innerHTML='';
-  const ALL_DAYS2=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  const DAY_SHORT2={Monday:'Mon',Tuesday:'Tue',Wednesday:'Wed',Thursday:'Thu',Friday:'Fri',Saturday:'Sat',Sunday:'Sun'};
-  ALL_DAYS2.forEach(dn=>{
-    const dk='done__'+ST.wk+'__'+dn;const isDone=ST.wd[dk];
+  const DAYS=['Wednesday','Thursday','Friday','Saturday','Sunday','Monday','Tuesday'];
+  const DAY_LABELS={Wednesday:'Wed',Thursday:'Thu',Friday:'Fri',Saturday:'Weekend',Sunday:'Weekend',Monday:'Mon',Tuesday:'Tue'};
+  const ph0=phFor(ST.wk);
+  const seen=new Set();
+  DAYS.forEach(dn=>{
+    // For Weekend days - only show one tab labeled Weekend, clicking opens whichever has a workout
+    const label=DAY_LABELS[dn];
+    if(label==='Weekend'&&seen.has('Weekend'))return;
+    seen.add(label);
+    // Find which day has the workout for this slot
+    const workoutDay=label==='Weekend'
+      ? (['Saturday','Sunday'].find(d=>ph0.days.some(dd=>dd.day===d))||'Saturday')
+      : dn;
+    const isDone=ST.wd['done__'+ST.wk+'__'+workoutDay];
+    const isActive=ST.day===workoutDay||(label==='Weekend'&&(ST.day==='Saturday'||ST.day==='Sunday'));
     const b=document.createElement('button');
-    b.className='day-btn'+(dn===ST.day?' active':'')+(isDone?' done':'');
-    b.innerHTML=DAY_SHORT2[dn]+'<span class="day-dot-sm"></span>';
-    b.onclick=()=>{ST.day=dn;renderDayView();};
+    b.className='day-btn'+(isActive?' active':'')+(isDone?' done':'');
+    b.innerHTML=label+'<span class="day-dot-sm"></span>';
+    b.onclick=()=>{ST.day=workoutDay;renderDayView();};
     dayBar.appendChild(b);
   });
   renderDayView();
 }
 
+// Global skip registry - iOS Safari safe
+window._skipReg={};
+window._skipIdx=0;
+window._pendingSkip=null;
+
+function skipByIdx(i){
+  const p=window._skipReg[i];
+  if(!p)return;
+  const key='skipped__'+ST.wk+'__'+p.day+'__'+p.n;
+  if(p.skipped){
+    // Restore immediately - no confirmation needed
+    delete ST.wd[key];save();renderStr();
+  } else {
+    // Show in-app modal instead of confirm()
+    window._pendingSkip={key:key};
+    const title=document.getElementById('skip-modal-title');
+    const sub=document.getElementById('skip-modal-sub');
+    if(title)title.textContent='Remove "'+p.n+'"?';
+    if(sub)sub.textContent='It will be hidden from today\'s workout. Tap the ↩ button to restore it anytime.';
+    document.getElementById('skip-modal').classList.add('show');
+  }
+}
+
+function doSkip(){
+  if(!window._pendingSkip)return;
+  const key=window._pendingSkip.key;
+  ST.wd[key]=true;save();
+  closeSkipModal();
+  renderStr();
+}
+
+function closeSkipModal(){
+  document.getElementById('skip-modal').classList.remove('show');
+  window._pendingSkip=null;
+}
+
 function renderDayView(){
-  const ALL_DAYS2=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  const DAY_SHORT2={Monday:'Mon',Tuesday:'Tue',Wednesday:'Wed',Thursday:'Thu',Friday:'Fri',Saturday:'Sat',Sunday:'Sun'};
+  const DAYS=['Wednesday','Thursday','Friday','Saturday','Sunday','Monday','Tuesday'];
+  const DAY_LABELS={Wednesday:'Wed',Thursday:'Thu',Friday:'Fri',Saturday:'Weekend',Sunday:'Weekend',Monday:'Mon',Tuesday:'Tue'};
   // Sync day tab highlights
-  document.querySelectorAll('.day-btn').forEach((b,i)=>{
-    const dn=ALL_DAYS2[i];const dk='done__'+ST.wk+'__'+dn;const isDone=ST.wd[dk];
-    b.className='day-btn'+(dn===ST.day?' active':'')+(isDone?' done':'');
+  const ph0=phFor(ST.wk);
+  document.querySelectorAll('.day-btn').forEach((b)=>{
+    const label=b.textContent.replace(/[●]/g,'').trim().replace(/\s+/g,'');
+    const fullLabel=b.innerHTML.includes('Wed')?'Wednesday':b.innerHTML.includes('Thu')?'Thursday':b.innerHTML.includes('Fri')?'Friday':b.innerHTML.includes('Weekend')?'Weekend':b.innerHTML.includes('Mon')?'Monday':'Tuesday';
+    if(fullLabel==='Weekend'){
+      const isDone=ST.wd['done__'+ST.wk+'__Saturday']||ST.wd['done__'+ST.wk+'__Sunday'];
+      const isActive=ST.day==='Saturday'||ST.day==='Sunday';
+      b.className='day-btn'+(isActive?' active':'')+(isDone?' done':'');
+    } else {
+      const dk='done__'+ST.wk+'__'+fullLabel;const isDone=ST.wd[dk];
+      b.className='day-btn'+(fullLabel===ST.day?' active':'')+(isDone?' done':'');
+    }
   });
   const ph=phFor(ST.wk);
   const phaseLbl=document.getElementById('phase-lbl');
@@ -1005,9 +1174,7 @@ function renderDayView(){
   const cont=document.getElementById('scont');cont.innerHTML='';
   const dayData=ph.days.find(d=>d.day===ST.day);
   if(!dayData){
-    const restInfo={Saturday:{name:'Rest + Sauna',note:'Active recovery day. Hemlock far infrared sauna recommended 8:30–9 PM. Hydrate well.'},Sunday:{name:'Stretch + Mobility',note:'20 min full body stretch. Focus on hip flexors, hamstrings, thoracic spine. Light foam roll.'}};
-    const rd=restInfo[ST.day];
-    cont.innerHTML='<div class="workout-card" style="margin-top:8px"><div class="workout-header"><div><div class="workout-day-lbl" style="color:var(--text3)">'+ST.day+'</div><div class="workout-name">'+(rd?rd.name:'No workout scheduled')+'</div></div></div><div style="padding:14px;font-size:13px;color:var(--text2);line-height:1.9">'+(rd?rd.note:'Rest and recover.')+'</div></div>';
+    cont.innerHTML='<div class="workout-card" style="margin-top:8px"><div class="workout-header"><div><div class="workout-day-lbl" style="color:var(--text3)">'+ST.day+'</div><div class="workout-name">No workout in this slot</div></div></div><div style="padding:14px;font-size:13px;color:var(--text2);line-height:1.9">This slot has no workout scheduled. Try another slot or check the week.</div></div>';
     return;
   }
   const wc=document.createElement('div');wc.className='workout-card';wc.style.marginTop='8px';
@@ -1036,9 +1203,24 @@ function renderDayView(){
     const noteKey='note__'+dayData.day+'__'+ex.n;const savedNote=ST.wd[noteKey]||'';
     const prevWkHist=hist.find(h=>h.week===(ST.wk-1));
     const prevBadge=prevWkHist?'<div style="font-size:10px;color:var(--amber);margin-top:4px;padding:2px 7px;background:rgba(245,158,11,0.1);border-radius:5px;display:inline-block">Wk'+(ST.wk-1)+' best: '+prevWkHist.bestWeight+'lbs × '+prevWkHist.bestReps+'</div>':'';
-    let top='<div class="ex-top"><div><div class="ex-name">'+ex.n+'</div><div class="ex-meta">'+ex.sets+'×'+ex.reps+' · '+ex.eq+'</div>'+mt+prevBadge+ni+'</div>';
-    if(plat)top+='<div class="plateau-tag"><div class="pdot"></div>PLATEAU</div>';
+    const exNameEnc=encodeURIComponent(ex.n);const dayNameEnc=encodeURIComponent(dayData.day);
+    const skipKey='skipped__'+ST.wk+'__'+dayData.day+'__'+ex.n;
+    const isSkipped=ST.wd[skipKey];
+    // Skip button - always tappable even when skipped
+    const skipBtnLabel=isSkipped?'↩':'×';
+    const skipBtnBg=isSkipped?'rgba(59,130,246,0.15)':'rgba(255,255,255,0.05)';
+    const skipBtnColor=isSkipped?'var(--blue)':'var(--text3)';
+    const _si=window._skipIdx++;
+    window._skipReg[_si]={n:ex.n,day:dayData.day,skipped:isSkipped};
+    const skipBtn='<button type="button" onclick="skipByIdx('+_si+')" style="background:'+skipBtnBg+';border:1px solid var(--border2);color:'+skipBtnColor+';font-size:18px;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:8px;-webkit-appearance:none;touch-action:manipulation;user-select:none;-webkit-user-select:none;">'+skipBtnLabel+'</button>';
+    // Build ex-top with skip button INSIDE the flex container
+    let top='<div class="ex-top" style="align-items:center;gap:4px">'
+      +'<div style="flex:1;min-width:0"><div class="ex-name">'+ex.n+(isSkipped?'<span style="font-size:9px;color:var(--red);margin-left:6px;background:var(--red-dim);padding:1px 6px;border-radius:4px">Skipped</span>':'')+'</div>'
+      +'<div class="ex-meta">'+ex.sets+'×'+ex.reps+' · '+ex.eq+'</div>'+mt+prevBadge+ni+'</div>';
+    if(plat)top+='<div style="display:flex;align-items:center;gap:4px"><div class="plateau-tag"><div class="pdot"></div>PLATEAU</div>'+skipBtn+'</div>';
+    else top+=skipBtn;
     top+='</div>';
+    if(isSkipped){div.style.opacity='0.5';}
     const ns=typeof ex.sets==='number'?ex.sets:1;
     let sc='<div class="sets-container">';
     for(let s=1;s<=ns;s++){
@@ -1053,13 +1235,14 @@ function renderDayView(){
       const rowCls=isPR?'pr-set':hasData?'done-set':'';
       const tgtTxt=pw>0?'Last: '+pw+'lbs × '+pr+' reps — beat it':curWt>0?'Suggested: '+curWt+'lbs':'First time — log it';
       const exEnc=encodeURIComponent(ex.n);const dayEnc=encodeURIComponent(dayData.day);
+      const wtInc=getWtIncrement(ex.n);
       sc+='<div class="set-row '+rowCls+'" id="sr__'+sk+'">'
         +'<div class="set-num">S'+s+'</div>'
         +'<div class="set-field"><div class="set-field-lbl">Weight</div>'
         +'<div class="adj-row">'
-        +'<button class="adj-btn" data-sk="'+sk+'" data-f="wt" data-d="-5" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjFromBtn(this)">−</button>'
+        +'<button class="adj-btn" data-sk="'+sk+'" data-f="wt" data-d="-'+wtInc+'" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjFromBtn(this)">−</button>'
         +'<div class="set-val-display'+(isPreFill?' prefill':isPR?' pr-val':'')+'" id="wv__'+sk+'">'+(curWt||'—')+'</div>'
-        +'<button class="adj-btn" data-sk="'+sk+'" data-f="wt" data-d="5" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjFromBtn(this)">+</button>'
+        +'<button class="adj-btn" data-sk="'+sk+'" data-f="wt" data-d="'+wtInc+'" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjFromBtn(this)">+</button>'
         +'</div></div>'
         +'<div class="set-sep">×</div>'
         +'<div class="set-field"><div class="set-field-lbl">Reps</div>'
@@ -1079,6 +1262,44 @@ function renderDayView(){
       +'<textarea class="note-input" placeholder="e.g. slow eccentric, felt strong..." data-nk="'+nkEnc+'" onchange="saveExNoteBtn(this)">'+savedNote+'</textarea></div>';
     div.innerHTML=top+sc+noteHtml;wc.appendChild(div);
   }
+  // Add exercise panel at bottom of workout card
+  const addedKey='added__'+ST.wk+'__'+dayData.day;
+  const addedExercises=ST.wd[addedKey]||[];
+  // Render any already-added exercises
+  addedExercises.forEach(ex=>{
+    const div=document.createElement('div');div.className='ex-row added-ex-row';
+    const exEnc2=encodeURIComponent(ex.n);const dayEnc2=encodeURIComponent(dayData.day);
+    const wtInc2=getWtIncrement(ex.n);
+    let addedTop='<div class="ex-top"><div><div class="ex-name">'+ex.n+' <span style="font-size:9px;color:var(--blue);margin-left:4px">+ Added</span></div><div class="ex-meta">3×10-12</div></div>'
+      +'<button style="background:var(--red-dim);border:1px solid var(--red);border-radius:6px;color:var(--red);font-size:10px;font-family:inherit;padding:3px 8px;cursor:pointer" onclick="removeAddedEx(\''+dayData.day+'\',\''+ex.n.replace(/'/g,"\\'")+'\')">Remove</button></div>';
+    let addedSets='<div class="sets-container">';
+    for(let s=1;s<=3;s++){
+      const sk2=ST.wk+'__'+dayData.day+'__'+ex.n+'__s'+s;const sv2=ST.wd[sk2]||{};
+      const sug2=getSuggest(ex.n,dayData.day,s);
+      const cw2=sv2.wt!==undefined&&sv2.wt!==''?parseFloat(sv2.wt)||0:sug2.wt;
+      const cr2=sv2.reps!==undefined&&sv2.reps!==''?parseInt(sv2.reps)||0:sug2.reps;
+      const hasD2=sv2.wt!==undefined&&sv2.wt!=='';
+      addedSets+='<div class="set-row'+(hasD2?' done-set':'')+'" id="sr__'+sk2+'">'
+        +'<div class="set-num">S'+s+'</div>'
+        +'<div class="set-field"><div class="set-field-lbl">Weight</div><div class="adj-row">'
+        +'<button class="adj-btn" data-sk="'+sk2+'" data-f="wt" data-d="-'+wtInc2+'" data-n="'+exEnc2+'" data-day="'+dayEnc2+'" data-s="'+s+'" onclick="adjFromBtn(this)">−</button>'
+        +'<div class="set-val-display" id="wv__'+sk2+'">'+(cw2||'—')+'</div>'
+        +'<button class="adj-btn" data-sk="'+sk2+'" data-f="wt" data-d="'+wtInc2+'" data-n="'+exEnc2+'" data-day="'+dayEnc2+'" data-s="'+s+'" onclick="adjFromBtn(this)">+</button>'
+        +'</div></div>'
+        +'<div class="set-sep">×</div>'
+        +'<div class="set-field"><div class="set-field-lbl">Reps</div><div class="adj-row">'
+        +'<button class="adj-btn" data-sk="'+sk2+'" data-f="reps" data-d="-1" data-n="'+exEnc2+'" data-day="'+dayEnc2+'" data-s="'+s+'" onclick="adjFromBtn(this)">−</button>'
+        +'<div class="set-val-display" id="rv__'+sk2+'">'+(cr2||'—')+'</div>'
+        +'<button class="adj-btn" data-sk="'+sk2+'" data-f="reps" data-d="1" data-n="'+exEnc2+'" data-day="'+dayEnc2+'" data-s="'+s+'" onclick="adjFromBtn(this)">+</button>'
+        +'</div></div></div>';
+    }
+    addedSets+='</div>';
+    div.innerHTML=addedTop+addedSets;wc.appendChild(div);
+  });
+  // Add the dropdown panel
+  const addPanelDiv=document.createElement('div');
+  addPanelDiv.innerHTML=buildAddExPanel(dayData.day);
+  wc.appendChild(addPanelDiv);
   cont.appendChild(wc);
 }
 
@@ -1087,8 +1308,8 @@ function togDoneDay(k,dayName){
   const btn=document.getElementById('donebtn_'+dayName);
   if(btn){btn.textContent=ST.wd[k]?'✓ Done':'Mark done';btn.className='btn-done'+(ST.wd[k]?' completed':'');}
   document.querySelectorAll('.day-btn').forEach((b,i)=>{
-    const ALL2=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-    if(ALL2[i]===dayName){const dk2='done__'+ST.wk+'__'+dayName;b.className='day-btn active'+(ST.wd[dk2]?' done':'');}
+    const DAYS2=['Wednesday','Thursday','Friday','Saturday','Sunday','Monday','Tuesday'];
+    if(DAYS2[i]===dayName){const dk2='done__'+ST.wk+'__'+dayName;b.className='day-btn active'+(ST.wd[dk2]?' done':'');}
   });
   save();
 }
@@ -1096,33 +1317,48 @@ function togDoneDay(k,dayName){
 
 function adjVal(sk,field,delta,n,day,s){
   if(!ST.wd[sk])ST.wd[sk]={};
-  const cur=parseFloat(ST.wd[sk][field])||0;
+  // If not yet saved this session, seed from the pre-fill (last week's value) so first tap adjusts from there
+  let cur;
+  if(ST.wd[sk][field]!==undefined && ST.wd[sk][field]!==''){
+    cur=parseFloat(ST.wd[sk][field])||0;
+  } else {
+    const sug0=getSuggest(n,day,s);
+    cur=field==='wt'?(sug0.wt||0):(sug0.reps||0);
+  }
   const neo=Math.max(0,cur+delta);
   ST.wd[sk][field]=neo.toString();
   const el=document.getElementById((field==='wt'?'wv__':'rv__')+sk);
   if(el)el.textContent=neo||'--';
   updHist(n,day,ST.wk);save();
-  const sug=getSuggest(n,day,s);const hist=exHist(n,day);const last=hist[0]||{};
+  const sug=getSuggest(n,day,s);const hist=exHist(n,day);const last=hist[0]||hist.find(h=>h.week===(ST.wk-1))||{};
   const pw=last['s'+s+'_wt']?parseFloat(last['s'+s+'_wt']):0;const pr=last['s'+s+'_reps']?parseInt(last['s'+s+'_reps']):0;
   const curWt=parseFloat(ST.wd[sk].wt)||0;const curReps=parseInt(ST.wd[sk].reps)||0;
   const isPR=(curWt>pw&&pw>0)||(curReps>pr&&pr>0);const hasData=ST.wd[sk].wt||ST.wd[sk].reps;
+  // Update only the row class - no full page rerender
   const row=document.getElementById('sr__'+sk);
-  if(row){row.className='set-row '+(isPR?'pr-set':hasData?'done-set':'');}
+  if(row){
+    const newCls='set-row '+(isPR?'pr-set':hasData?'done-set':'');
+    if(row.className!==newCls)row.className=newCls;
+  }
+  // Update plateau count in dashboard without rerendering
+  const dpEl=document.getElementById('dp');
+  if(dpEl)dpEl.textContent=countPlat();
   // Fire rest timer when reps are logged (set complete)
   if(field==='reps' && neo > 0){
     const ph=phFor(ST.wk);const dayData=ph.days.find(d=>d.day===day);
     const ex=dayData?dayData.exercises.find(e=>e.n===n):null;
     const totalSets=ex?ex.sets:3;
     const setNum=parseInt(s);
-    // Find next exercise name
     let nextEx=null;
     if(ex&&dayData&&setNum>=totalSets){
       const exIdx=dayData.exercises.findIndex(e=>e.n===n);
       if(exIdx>=0&&exIdx+1<dayData.exercises.length)nextEx=dayData.exercises[exIdx+1].n;
+    } else if(ex&&dayData){
+      // Show next set hint - same exercise
+      nextEx=ex.n+' set '+(setNum+1);
     }
     startRest(n,setNum,totalSets,nextEx);
   }
-  renderDash();
 }
 
 function logMetcon(key,val,day,type,desc){
@@ -1356,8 +1592,7 @@ function startRest(exName, setNum, totalSets, nextExName) {
   }
 
   bar.classList.add('active');
-  // Push content down so timer doesn't cover top nav
-  document.querySelector('.nav').style.marginTop = '70px';
+  requestWakeLock();
 
   if (restInterval) clearInterval(restInterval);
   updateRestDisplay();
@@ -1399,7 +1634,6 @@ function restSkip() {
   if (restInterval) { clearInterval(restInterval); restInterval = null; }
   const bar = document.getElementById('rest-bar');
   bar.classList.remove('active');
-  document.querySelector('.nav').style.marginTop = '0';
 }
 
 function restAdd30() {
@@ -1439,6 +1673,95 @@ function saveExNoteBtn(ta){
   const key=decodeURIComponent(ta.dataset.nk);
   ST.wd[key]=ta.value;save();
 }
+
+
+/* ── SCREEN WAKE LOCK ── */
+let wakeLock = null;
+
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    }
+  } catch(e) {}
+}
+
+async function releaseWakeLock() {
+  try {
+    if (wakeLock) { await wakeLock.release(); wakeLock = null; }
+  } catch(e) {}
+}
+
+// Re-acquire wake lock when page becomes visible again (e.g. after screen on)
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible' && restInterval) {
+    await requestWakeLock();
+  }
+});
+
+
+function getWtIncrement(exName){
+  const n=(exName||'').toLowerCase();
+  // 2.5lb increments for isolation and light accessory moves
+  const small=['lateral raise','rear delt fly','reverse fly','kickback','hammer curl','bicep curl','preacher curl','incline curl','shrug','calf raise','tricep extension','overhead extension','pushdown','face pull','cable curl','cable hammer','cable face','cable lateral','cable rear'];
+  if(small.some(k=>n.includes(k)))return 2.5;
+  return 5;
+}
+
+
+function togAddEx(day){
+  const panel=document.getElementById('add-ex-panel-'+day);
+  const toggle=document.getElementById('add-ex-toggle-'+day);
+  if(!panel||!toggle)return;
+  const isOpen=panel.classList.contains('open');
+  panel.classList.toggle('open',!isOpen);
+  toggle.classList.toggle('open',!isOpen);
+  toggle.textContent=isOpen?'+ Add exercise':'▲ Close';
+}
+
+function addExToDay(day){
+  const sel=document.getElementById('add-ex-sel-'+day);
+  const customInp=document.getElementById('add-ex-custom-'+day);
+  const exName=customInp&&customInp.value.trim()?customInp.value.trim():(sel?sel.value:'');
+  if(!exName||exName==='--')return;
+  const key='added__'+ST.wk+'__'+day;
+  if(!ST.wd[key])ST.wd[key]=[];
+  if(ST.wd[key].find(e=>e.n===exName))return; // already added
+  ST.wd[key].push({n:exName,sets:3,reps:'10-12',m:'compound',eq:'See notes',added:true});
+  if(customInp)customInp.value='';
+  save();
+  renderStr();
+}
+
+function removeAddedEx(day,exName){
+  const key='added__'+ST.wk+'__'+day;
+  if(!ST.wd[key])return;
+  ST.wd[key]=ST.wd[key].filter(e=>e.n!==exName);
+  save();renderStr();
+}
+
+function buildAddExPanel(day){
+  // Build the add exercise dropdown HTML
+  let opts='<option value="--">-- Pick a move --</option>';
+  for(const[group,exercises] of Object.entries(EX_LIBRARY)){
+    opts+='<optgroup label="'+group+'">';
+    exercises.forEach(ex=>{opts+='<option value="'+ex+'">'+ex+'</option>';});
+    opts+='</optgroup>';
+  }
+  return '<div class="add-ex-wrap">'
+    +'<button class="add-ex-toggle" id="add-ex-toggle-'+day+'" onclick="togAddEx(\''+day+'\')">+ Add exercise</button>'
+    +'<div class="add-ex-panel" id="add-ex-panel-'+day+'">'
+    +'<div class="add-ex-group"><div class="add-ex-group-label">Pick from library</div>'
+    +'<select class="add-ex-select" id="add-ex-sel-'+day+'">'+opts+'</select></div>'
+    +'<div class="add-ex-group"><div class="add-ex-group-label">Or type custom</div>'
+    +'<div class="custom-ex-row"><input class="custom-ex-inp" id="add-ex-custom-'+day+'" placeholder="e.g. Cable face pull"></div></div>'
+    +'<button class="add-ex-btn" onclick="addExToDay(\''+day+'\')">+ Add to today</button>'
+    +'</div></div>';
+}
+
+
+// confirmSkipEx replaced by event delegation handleSkipClick
 
 </script>
 </body>
