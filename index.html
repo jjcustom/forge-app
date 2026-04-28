@@ -246,6 +246,63 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 .modal-actions{display:flex;flex-direction:column;gap:8px}
 .modal-btn-red{background:var(--red-dim);border:1px solid var(--red);border-radius:12px;color:var(--red);font-size:14px;font-weight:600;font-family:inherit;padding:14px;cursor:pointer;width:100%}
 .modal-btn-cancel{background:var(--surface2);border:1px solid var(--border2);border-radius:12px;color:var(--text2);font-size:14px;font-weight:600;font-family:inherit;padding:14px;cursor:pointer;width:100%}
+
+/* ── STABLE LAYOUT - prevent jump on tap ── */
+.set-row{min-height:72px;box-sizing:border-box}
+.set-target{min-height:16px;box-sizing:border-box}
+.ex-row{contain:layout style}
+.sets-container{contain:layout style}
+/* Prevent iOS scroll jump on button tap */
+.adj-btn{touch-action:manipulation;-webkit-touch-callout:none;-webkit-user-select:none}
+
+.add-set-btn{background:transparent;border:1px dashed var(--border2);border-radius:8px;color:var(--text3);font-size:11px;font-family:inherit;padding:6px 14px;cursor:pointer;width:100%;margin-top:4px;touch-action:manipulation}
+.add-set-btn:active{background:var(--blue-dim);border-color:var(--blue);color:var(--blue)}
+
+/* ── PROFILE SWITCHER ── */
+.profile-bar{display:flex;gap:6px;padding:10px 14px 0;background:var(--bg)}
+.profile-btn{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.2s;text-align:center}
+.profile-btn.forge-active{background:var(--blue);border-color:var(--blue);color:#fff}
+.profile-btn.jewel-active{background:#ec4899;border-color:#ec4899;color:#fff}
+/* JEWEL color overrides when her profile active */
+.jewel-theme .nav-logo{color:#ec4899}
+.jewel-theme .tab-btn.active{background:#ec4899;border-color:#ec4899}
+.jewel-theme .wk-btn.active{background:#ec4899;border-color:#ec4899}
+.jewel-theme .day-btn.active{color:#ec4899;border-bottom-color:#ec4899;background:rgba(236,72,153,0.1)}
+.jewel-theme .btn-primary{background:#ec4899}
+.jewel-theme .phase-badge{border-color:#ec4899 !important;color:#ec4899 !important}
+/* Run card styles */
+.run-day-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.run-day-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.run-type-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.run-segment{padding:10px 14px;border-bottom:1px solid var(--border)}
+.run-segment:last-child{border-bottom:none}
+.run-seg-title{font-size:12px;font-weight:600;margin-bottom:2px}
+.run-seg-detail{font-size:11px;color:var(--text3);line-height:1.6}
+.crossfit-banner{background:linear-gradient(135deg,rgba(236,72,153,0.15),rgba(168,85,247,0.15));border:1px solid rgba(236,72,153,0.3);border-radius:10px;padding:12px 14px;margin-bottom:10px;text-align:center}
+.cf-title{font-size:14px;font-weight:700;color:#f472b6;margin-bottom:4px}
+.cf-sub{font-size:11px;color:var(--text2)}
+
+/* ── PHOTO SCAN ── */
+.scan-card{background:var(--surface2);border:1px solid var(--border2);border-radius:14px;padding:14px;margin-bottom:10px}
+.scan-title{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px}
+.scan-upload-area{border:2px dashed var(--border2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:10px;position:relative}
+.scan-upload-area:active{border-color:var(--blue);background:var(--blue-dim)}
+.scan-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.scan-icon{font-size:28px;margin-bottom:6px}
+.scan-label{font-size:12px;color:var(--text2);margin-bottom:2px;font-weight:600}
+.scan-sub{font-size:10px;color:var(--text3)}
+.scan-preview{width:100%;border-radius:8px;margin-bottom:10px;display:none;max-height:200px;object-fit:cover}
+.scan-result{background:var(--surface);border:1px solid var(--green);border-radius:10px;padding:12px;margin-bottom:10px;display:none}
+.scan-result-title{font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px}
+.scan-field{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.scan-field:last-child{border-bottom:none}
+.scan-field-label{color:var(--text3)}
+.scan-field-value{font-weight:600;color:var(--text)}
+.scan-loading{display:none;text-align:center;padding:16px;font-size:12px;color:var(--text3)}
+.scan-loading .spin{display:inline-block;width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.api-key-row{display:flex;gap:6px;margin-bottom:10px}
+.api-key-input{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:11px;font-family:inherit;padding:8px 10px}
 </style>
 </head>
 <body>
@@ -285,6 +342,10 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
   <div><div class="nav-logo">FORGE</div><div class="nav-sub">PPL x2 - 8 Week</div></div>
   <div style="text-align:right"><div style="font-size:13px;font-weight:600" id="nav-wt">215 lbs</div><div style="font-size:10px;color:var(--text3)">Current weight</div></div>
 </div>
+<div class="profile-bar">
+  <button class="profile-btn forge-active" id="forge-btn" onclick="switchProfile('forge')">⚡ FORGE — Jacob</button>
+  <button class="profile-btn" id="jewel-btn" onclick="switchProfile('jewel')">💎 JEWEL — Jewel</button>
+</div>
 <div class="tabs">
   <button class="tab-btn active" onclick="showTab('dash')">Dashboard</button>
   <button class="tab-btn" onclick="showTab('str')">Strength</button>
@@ -294,6 +355,7 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
   <button class="tab-btn" onclick="showTab('prog')">Progress</button>
   <button class="tab-btn" onclick="showTab('rehab')">Knee rehab</button>
   <button class="tab-btn" onclick="showTab('sauna')">Sauna</button>
+  <button class="tab-btn" onclick="showTab('scan')">📷 Scan</button>
   <button class="tab-btn" onclick="showTab('cfg')">Settings</button>
 </div>
 
@@ -1123,6 +1185,14 @@ window._pendingSkip=null;
 function skipByIdx(i){
   const p=window._skipReg[i];
   if(!p)return;
+  // Handle + Add set action
+  if(p.addSet){
+    const extraKey='extrasets__'+ST.wk+'__'+p.day+'__'+p.n;
+    const current=ST.wd[extraKey]||0;
+    ST.wd[extraKey]=current+1;
+    save();renderStr();
+    return;
+  }
   const key='skipped__'+ST.wk+'__'+p.day+'__'+p.n;
   if(p.skipped){
     // Restore immediately - no confirmation needed
@@ -1181,16 +1251,27 @@ function renderDayView(){
   const dk='done__'+ST.wk+'__'+dayData.day;const done=ST.wd[dk];
   const dc=DAYCOLS[dayData.type]||'#888';
   const metconKey='metcon__'+ST.wk+'__'+dayData.day;const metconBest=ST.wd[metconKey]||'';
-  const togCall='togDoneDay("'+dk+'","'+dayData.day+'")';
-  const mcOnChange='logMetcon("'+metconKey+'",this.value,"'+dayData.day+'","'+dayData.metcon.type.replace(/"/g,"'")+'","'+dayData.metcon.desc.replace(/"/g,"'")+'")';
-  const mcOnClick='logMetcon("'+metconKey+'",document.getElementById(\'mc_'+dayData.day+'\').value,"'+dayData.day+'","'+dayData.metcon.type.replace(/"/g,"'")+'","'+dayData.metcon.desc.replace(/"/g,"'")+'")';
-  wc.innerHTML='<div class="workout-header"><div><div class="workout-day-lbl" style="color:'+dc+'">'+dayData.day+' - '+dayData.type+'</div><div class="workout-name">'+dayData.name+'</div></div>'
-    +'<button class="btn-done'+(done?' completed':'')+'" id="donebtn_'+dayData.day+'" onclick="'+togCall+'">'+(done?'Done':'Mark done')+'</button></div>'
-    +'<div class="cardio-banner">'+dayData.cardio+'</div>'
-    +'<div class="metcon-banner"><div class="metcon-title">'+dayData.metcon.type+'</div><div class="metcon-desc">'+dayData.metcon.desc+'</div>'
-    +'<div class="metcon-log-row"><input class="metcon-inp" id="mc_'+dayData.day+'" type="text" placeholder="mm:ss or rounds" value="'+metconBest+'" onchange="'+mcOnChange+'">'
-    +'<button class="btn-primary" style="font-size:11px;padding:8px 12px" onclick="'+mcOnClick+'">Save</button></div>'
-    +(metconBest?'<div class="metcon-best">Best: '+metconBest+'</div>':'')+'</div>';
+  // Header built with DOM - no onclick string escaping needed
+  const whDiv=document.createElement('div');whDiv.className='workout-header';
+  const whInfo=document.createElement('div');
+  whInfo.innerHTML='<div class="workout-day-lbl" style="color:'+dc+'">'+dayData.day+' · '+dayData.type+'</div><div class="workout-name">'+dayData.name+'</div>';
+  const doneBtn=document.createElement('button');
+  doneBtn.className='btn-done'+(done?' completed':'');
+  doneBtn.id='donebtn_'+dayData.day;
+  doneBtn.textContent=done?'✓ Done':'Mark done';
+  (function(k,d){doneBtn.addEventListener('click',function(){togDoneDay(k,d);});})(dk,dayData.day);
+  whDiv.appendChild(whInfo);whDiv.appendChild(doneBtn);wc.appendChild(whDiv);
+  const cbDiv=document.createElement('div');cbDiv.className='cardio-banner';cbDiv.textContent=dayData.cardio;wc.appendChild(cbDiv);
+  const mbDiv=document.createElement('div');mbDiv.className='metcon-banner';
+  mbDiv.innerHTML='<div class="metcon-title">'+dayData.metcon.type+'</div><div class="metcon-desc">'+dayData.metcon.desc+'</div>';
+  const mcRow=document.createElement('div');mcRow.className='metcon-log-row';
+  const mcInp=document.createElement('input');mcInp.className='metcon-inp';mcInp.id='mc_'+dayData.day;mcInp.type='text';mcInp.placeholder='mm:ss or rounds';mcInp.value=metconBest;
+  (function(mk,md,mt,mdc){mcInp.addEventListener('change',function(){logMetcon(mk,this.value,md,mt,mdc);});})(metconKey,dayData.day,dayData.metcon.type,dayData.metcon.desc);
+  const mcSaveBtn=document.createElement('button');mcSaveBtn.className='btn-primary';mcSaveBtn.style.cssText='font-size:11px;padding:8px 12px';mcSaveBtn.textContent='Save';
+  (function(mk,md,mt,mdc){mcSaveBtn.addEventListener('click',function(){logMetcon(mk,document.getElementById('mc_'+md).value,md,mt,mdc);});})(metconKey,dayData.day,dayData.metcon.type,dayData.metcon.desc);
+  mcRow.appendChild(mcInp);mcRow.appendChild(mcSaveBtn);mbDiv.appendChild(mcRow);
+  if(metconBest){const mbest=document.createElement('div');mbest.className='metcon-best';mbest.textContent='Best: '+metconBest;mbDiv.appendChild(mbest);}
+  wc.appendChild(mbDiv);
   for(const ex of dayData.exercises){
     const plat=isPlat(ex.n,dayData.day);
     const isSq=ex.m==='squat';const isF=ex.m&&ex.m!=='compound'&&ex.m!=='squat';
@@ -1221,7 +1302,9 @@ function renderDayView(){
     else top+=skipBtn;
     top+='</div>';
     if(isSkipped){div.style.opacity='0.5';}
-    const ns=typeof ex.sets==='number'?ex.sets:1;
+    const extraSetsKey='extrasets__'+ST.wk+'__'+dayData.day+'__'+ex.n;
+    const extraSets=ST.wd[extraSetsKey]||0;
+    const ns=(typeof ex.sets==='number'?ex.sets:1)+extraSets;
     let sc='<div class="sets-container">';
     for(let s=1;s<=ns;s++){
       const sk=ST.wk+'__'+dayData.day+'__'+ex.n+'__s'+s;const sv=ST.wd[sk]||{};
@@ -1256,6 +1339,10 @@ function renderDayView(){
         +'<div class="set-target'+(isPR?' beat':'')+'">'+tgtTxt+'</div>';
     }
     sc+='</div>';
+    // + Set button - uses registry like skipByIdx
+    const _addSetIdx=window._skipIdx++;
+    window._skipReg[_addSetIdx]={addSet:true,n:ex.n,day:dayData.day,currentSets:ns};
+    sc+='<button type="button" class="add-set-btn" onclick="skipByIdx('+_addSetIdx+')">+ Add set</button>';
     const nkEnc=encodeURIComponent(noteKey);
     const noteHtml='<span class="note-toggle" data-nk="'+nkEnc+'" onclick="togNoteBtn(this)">'+(savedNote?'Edit note':'+ Add note')+'</span>'
       +'<div class="note-area'+(savedNote?' open':'')+'">'
@@ -1294,7 +1381,18 @@ function renderDayView(){
         +'</div></div></div>';
     }
     addedSets+='</div>';
-    div.innerHTML=addedTop+addedSets;wc.appendChild(div);
+    // + Set button for added exercises
+    const _addSetIdx2=window._skipIdx++;
+    window._skipReg[_addSetIdx2]={addSet:true,n:ex.n,day:dayData.day,currentSets:3};
+    addedSets+='<button type="button" class="add-set-btn" onclick="skipByIdx('+_addSetIdx2+')">+ Add set</button>';
+    // Note toggle for added exercises
+    const addedNoteKey='note__'+dayData.day+'__'+ex.n;
+    const addedSavedNote=ST.wd[addedNoteKey]||'';
+    const addedNkEnc=encodeURIComponent(addedNoteKey);
+    const addedNoteHtml='<span class="note-toggle" data-nk="'+addedNkEnc+'" onclick="togNoteBtn(this)">'+(addedSavedNote?'Edit note':'+ Add note')+'</span>'
+      +'<div class="note-area'+(addedSavedNote?' open':'')+'">'
+      +'<textarea class="note-input" placeholder="e.g. substitution reason, weight used..." data-nk="'+addedNkEnc+'" onchange="saveExNoteBtn(this)">'+addedSavedNote+'</textarea></div>';
+    div.innerHTML=addedTop+addedSets+addedNoteHtml;wc.appendChild(div);
   });
   // Add the dropdown panel
   const addPanelDiv=document.createElement('div');
@@ -1334,15 +1432,19 @@ function adjVal(sk,field,delta,n,day,s){
   const pw=last['s'+s+'_wt']?parseFloat(last['s'+s+'_wt']):0;const pr=last['s'+s+'_reps']?parseInt(last['s'+s+'_reps']):0;
   const curWt=parseFloat(ST.wd[sk].wt)||0;const curReps=parseInt(ST.wd[sk].reps)||0;
   const isPR=(curWt>pw&&pw>0)||(curReps>pr&&pr>0);const hasData=ST.wd[sk].wt||ST.wd[sk].reps;
-  // Update only the row class - no full page rerender
-  const row=document.getElementById('sr__'+sk);
-  if(row){
-    const newCls='set-row '+(isPR?'pr-set':hasData?'done-set':'');
-    if(row.className!==newCls)row.className=newCls;
-  }
-  // Update plateau count in dashboard without rerendering
-  const dpEl=document.getElementById('dp');
-  if(dpEl)dpEl.textContent=countPlat();
+  // Batch DOM updates in next frame to prevent layout thrashing
+  requestAnimationFrame(()=>{
+    const row=document.getElementById('sr__'+sk);
+    if(row){
+      const newCls='set-row '+(isPR?'pr-set':hasData?'done-set':'');
+      if(row.className!==newCls)row.className=newCls;
+    }
+  });
+  // Defer plateau count update - non-critical
+  setTimeout(()=>{
+    const dpEl=document.getElementById('dp');
+    if(dpEl)dpEl.textContent=countPlat();
+  },500);
   // Fire rest timer when reps are logged (set complete)
   if(field==='reps' && neo > 0){
     const ph=phFor(ST.wk);const dayData=ph.days.find(d=>d.day===day);
@@ -1660,9 +1762,13 @@ function playBeep() {
 
 
 function adjFromBtn(btn){
+  // Lock scroll position to prevent page jump on tap
+  const scrollY=window.scrollY;
   const sk=btn.dataset.sk;const f=btn.dataset.f;const d=parseFloat(btn.dataset.d);
   const n=decodeURIComponent(btn.dataset.n);const day=decodeURIComponent(btn.dataset.day);const s=btn.dataset.s;
   adjVal(sk,f,d,n,day,s);
+  // Restore scroll position immediately after DOM update
+  requestAnimationFrame(()=>{ window.scrollTo(0,scrollY); });
 }
 function togNoteBtn(el){
   const key=decodeURIComponent(el.dataset.nk);
@@ -1763,6 +1869,874 @@ function buildAddExPanel(day){
 
 // confirmSkipEx replaced by event delegation handleSkipClick
 
+
+/* ══════════════════════════════════════
+   JEWEL PROGRAM DATA
+   ══════════════════════════════════════ */
+
+const JPH = [
+  // WEEKS 1-4: BASE PHASE
+  {label:"Base",color:"#ec4899",weeks:[1,2,3,4],days:[
+    {day:"Tuesday",type:"Upper",name:"Upper Body Strength",exercises:[
+      {n:"Barbell bench press",eq:"Barbell+bench",sets:4,reps:"8-10",m:"compound",note:"Start at 95 lbs - build from here"},
+      {n:"DB incline press",eq:"Adj DBs+bench",sets:3,reps:"10-12",m:"compound"},
+      {n:"DB shoulder press",eq:"Adj DBs",sets:3,reps:"10-12",m:"shoulder"},
+      {n:"DB lateral raise",eq:"Adj DBs",sets:3,reps:"15",m:"shoulder",note:"2 sec descent"},
+      {n:"EZ bar bicep curl",eq:"EZ curl bar",sets:3,reps:"12",m:"bicep"},
+      {n:"DB tricep overhead extension",eq:"Adj DBs",sets:3,reps:"12",m:"tricep"},
+      {n:"Plank",eq:"Mat",sets:3,reps:"45 sec",m:null},
+      {n:"Dead bug",eq:"Mat",sets:3,reps:"10/side",m:null},
+    ]},
+    {day:"Thursday",type:"Lower",name:"Lower Body Strength",exercises:[
+      {n:"Barbell back squat",eq:"Barbell",sets:4,reps:"8-10",m:"compound",note:"Start at 165 lbs"},
+      {n:"Barbell Romanian deadlift",eq:"Barbell",sets:4,reps:"10-12",m:"compound",note:"Start at 135 lbs"},
+      {n:"Barbell hip thrust",eq:"Barbell+bench",sets:4,reps:"12-15",m:"compound",note:"Drive through heels - squeeze at top"},
+      {n:"DB walking lunges",eq:"Adj DBs",sets:3,reps:"12/leg",m:"compound"},
+      {n:"Standing calf raise",eq:"Barbell or BW",sets:3,reps:"15-20",m:null},
+      {n:"Glute bridge",eq:"Mat",sets:3,reps:"15",m:"compound",note:"Bodyweight - 2 sec hold at top"},
+    ]},
+    {day:"Weekend",type:"Full",name:"Full Body + Core",exercises:[
+      {n:"Barbell deadlift",eq:"Barbell",sets:4,reps:"6-8",m:"compound",note:"Start at 155 lbs"},
+      {n:"DB bent-over row",eq:"Adj DBs",sets:3,reps:"10/side",m:"compound"},
+      {n:"Barbell overhead press",eq:"Barbell",sets:3,reps:"8-10",m:"shoulder",note:"Start at 85 lbs"},
+      {n:"DB lateral raise",eq:"Adj DBs",sets:3,reps:"15",m:"shoulder"},
+      {n:"Hanging knee raise",eq:"Pull-up rig",sets:3,reps:"15",m:null,note:"Core - controlled"},
+      {n:"Plank to push-up",eq:"Mat",sets:3,reps:"10",m:null},
+      {n:"Russian twist",eq:"KB",sets:3,reps:"20",m:null,note:"KB or plate - oblique focus for ab definition"},
+    ]},
+  ]},
+  // WEEKS 5-8: BUILD PHASE
+  {label:"Build",color:"#a855f7",weeks:[5,6,7,8],days:[
+    {day:"Tuesday",type:"Upper",name:"Upper — Build Phase",exercises:[
+      {n:"Barbell bench press",eq:"Barbell+bench",sets:4,reps:"6-8",m:"compound",note:"Add weight each week"},
+      {n:"DB incline press",eq:"Adj DBs+bench",sets:4,reps:"8-10",m:"compound"},
+      {n:"DB Arnold press",eq:"Adj DBs",sets:3,reps:"10",m:"shoulder"},
+      {n:"DB lateral raise",eq:"Adj DBs",sets:4,reps:"12-15",m:"shoulder"},
+      {n:"DB rear delt fly",eq:"Adj DBs",sets:3,reps:"15",m:"shoulder"},
+      {n:"EZ bar bicep curl",eq:"EZ curl bar",sets:3,reps:"10-12",m:"bicep"},
+      {n:"DB hammer curl",eq:"Adj DBs",sets:3,reps:"12",m:"bicep"},
+      {n:"EZ bar skull crusher",eq:"EZ curl bar",sets:3,reps:"10-12",m:"tricep"},
+      {n:"Hollow hold",eq:"Mat",sets:3,reps:"30 sec",m:null},
+    ]},
+    {day:"Thursday",type:"Lower",name:"Lower — Build Phase",exercises:[
+      {n:"Barbell back squat",eq:"Barbell",sets:5,reps:"6-8",m:"compound"},
+      {n:"Barbell Romanian deadlift",eq:"Barbell",sets:4,reps:"8-10",m:"compound"},
+      {n:"Barbell hip thrust heavier",eq:"Barbell+bench",sets:5,reps:"10-12",m:"compound"},
+      {n:"DB Bulgarian split squat",eq:"Adj DBs+bench",sets:3,reps:"10/leg",m:"compound",note:"Rear foot elevated - deep stretch"},
+      {n:"Nordic curl negative",eq:"Pull-up rig",sets:3,reps:"5",m:"compound"},
+      {n:"Weighted calf raise",eq:"Barbell",sets:3,reps:"15",m:null},
+    ]},
+    {day:"Weekend",type:"Full",name:"Full Body — Build Phase",exercises:[
+      {n:"Barbell deadlift",eq:"Barbell",sets:5,reps:"5-6",m:"compound"},
+      {n:"Barbell bent-over row",eq:"Barbell",sets:4,reps:"8-10",m:"compound"},
+      {n:"Barbell overhead press",eq:"Barbell",sets:4,reps:"8",m:"shoulder"},
+      {n:"Weighted ring pull-up",eq:"Gymnastic rings",sets:3,reps:"max",m:"compound"},
+      {n:"KB swing",eq:"Kettlebell",sets:4,reps:"15",m:"compound"},
+      {n:"Hanging knee raise",eq:"Pull-up rig",sets:4,reps:"15",m:null},
+      {n:"Russian twist weighted",eq:"KB",sets:3,reps:"20",m:null},
+      {n:"Cable lateral raise",eq:"Pulley+handle",sets:3,reps:"12/side",m:"shoulder"},
+    ]},
+  ]},
+  // WEEKS 9-12: PEAK PHASE
+  {label:"Peak",color:"#f59e0b",weeks:[9,10,11,12],days:[
+    {day:"Tuesday",type:"Upper",name:"Upper — Peak Phase",exercises:[
+      {n:"Barbell bench press near max",eq:"Barbell+bench",sets:5,reps:"4-6",m:"compound"},
+      {n:"DB incline press heavy",eq:"Adj DBs+bench",sets:4,reps:"8",m:"compound"},
+      {n:"DB Arnold press",eq:"Adj DBs",sets:4,reps:"10",m:"shoulder"},
+      {n:"Cable lateral raise",eq:"Pulley+handle",sets:4,reps:"12/side",m:"shoulder"},
+      {n:"Cable face pull",eq:"Pulley+rope",sets:4,reps:"15",m:"shoulder"},
+      {n:"Cable bicep curl",eq:"Pulley+bar",sets:4,reps:"10-12",m:"bicep"},
+      {n:"Cable tricep pushdown",eq:"Pulley+rope",sets:4,reps:"12",m:"tricep"},
+      {n:"Hanging leg raise",eq:"Pull-up rig",sets:4,reps:"12",m:null,note:"Full leg raise for lower abs"},
+    ]},
+    {day:"Thursday",type:"Lower",name:"Lower — Peak Phase",exercises:[
+      {n:"Barbell back squat heavy",eq:"Barbell",sets:5,reps:"5",m:"compound"},
+      {n:"Barbell Romanian deadlift heavy",eq:"Barbell",sets:5,reps:"6-8",m:"compound"},
+      {n:"Barbell hip thrust peak",eq:"Barbell+bench",sets:5,reps:"8-10",m:"compound"},
+      {n:"DB Bulgarian split squat heavy",eq:"Adj DBs+bench",sets:4,reps:"8/leg",m:"compound"},
+      {n:"Nordic curl negative",eq:"Pull-up rig",sets:4,reps:"6",m:"compound"},
+      {n:"Single-leg calf raise",eq:"DB",sets:3,reps:"15/leg",m:null},
+    ]},
+    {day:"Weekend",type:"Full",name:"Full Body — Peak + Shred",exercises:[
+      {n:"Barbell deadlift near max",eq:"Barbell",sets:5,reps:"3-4",m:"compound"},
+      {n:"Barbell bent-over row heavy",eq:"Barbell",sets:5,reps:"6-8",m:"compound"},
+      {n:"Barbell overhead press heavy",eq:"Barbell",sets:4,reps:"6-8",m:"shoulder"},
+      {n:"Weighted ring pull-up",eq:"Gymnastic rings",sets:4,reps:"max",m:"compound"},
+      {n:"KB swing heavy",eq:"Kettlebell",sets:4,reps:"20",m:"compound"},
+      {n:"Hanging leg raise",eq:"Pull-up rig",sets:4,reps:"15",m:null},
+      {n:"Cable lateral raise",eq:"Pulley+handle",sets:4,reps:"12/side",m:"shoulder"},
+      {n:"Russian twist heavy",eq:"KB",sets:4,reps:"20",m:null},
+    ]},
+  ]},
+];
+
+/* JEWEL RUNNING PLAN — 6 WEEK INTENSE */
+const JRUNS = [
+  {wk:1,label:"Speed Foundation",sessions:[
+    {day:"Tuesday",type:"Easy + Strides",dist:"3 miles + 6×100m strides",pace:"Easy 11:30/mi then strides at 5K effort",note:"After easy run: 6 x 100m fast with 60 sec walk back. Wake up your fast-twitch fibers."},
+    {day:"Thursday",type:"Threshold",dist:"4 miles — 2 mi easy · 1.5 mi tempo · 0.5 mi easy",pace:"Tempo at 9:45/mi — comfortably hard",note:"You should be able to speak in short sentences but not hold a conversation. This is your threshold pace."},
+    {day:"Weekend",type:"Long run",dist:"5 miles",pace:"Easy 11:30-12:00/mi — conversational",note:"All easy. Time on feet. Build your aerobic base."},
+  ]},
+  {wk:2,label:"Building Intensity",sessions:[
+    {day:"Tuesday",type:"Interval",dist:"5×800m",pace:"Target 9:30/mi per 800m",note:"90 sec jog recovery between each. Push every rep. This is faster than your 10K goal pace — builds speed reserve."},
+    {day:"Thursday",type:"Tempo",dist:"5 miles — 1 mi easy · 3 mi tempo · 1 mi easy",pace:"Tempo at 9:30-9:45/mi",note:"3 continuous miles at tempo. Hard but controlled. If you can't finish 3 miles drop to 2 and build next week."},
+    {day:"Weekend",type:"Long run",dist:"6 miles",pace:"Easy 11:00-11:30/mi",note:"Race distance. Run the whole thing. Easy pace throughout."},
+  ]},
+  {wk:3,label:"Race Pace Introduction",sessions:[
+    {day:"Tuesday",type:"Cruise Intervals",dist:"4×1 mile",pace:"9:36/mi — exact sub-60 10K pace",note:"60 sec standing rest between miles. Four miles at exact goal race pace. This will feel hard. It should. You're training your body to hold this pace for 6.2 miles."},
+    {day:"Thursday",type:"Fartlek",dist:"4 miles",pace:"Mix: 1 min hard / 2 min easy throughout",note:"After 1 mile warmup: alternate 1 min at 5K effort with 2 min easy for 25 minutes. Then 1 mile cool down. Builds speed without the structure of intervals."},
+    {day:"Weekend",type:"Long run",dist:"6.5 miles",pace:"Easy 11:00/mi",note:"Longest run yet. Keep it easy. Focus on finishing strong not fast."},
+  ]},
+  {wk:4,label:"Peak Volume",sessions:[
+    {day:"Tuesday",type:"Interval",dist:"6×800m",pace:"9:20/mi per 800m — faster than goal pace",note:"90 sec jog recovery. Faster than race pace builds speed reserve. If you can run 800m at 9:20 pace, 9:36 pace for 6.2 miles becomes manageable."},
+    {day:"Thursday",type:"Tempo",dist:"5 miles — 1 mi easy · 3.5 mi tempo · 0.5 mi easy",pace:"9:30/mi tempo",note:"Longest tempo of the program. This is 3.5 miles at harder than race pace. Mental toughness workout."},
+    {day:"Weekend",type:"Long run",dist:"7 miles",pace:"Easy 11:00/mi",note:"Peak long run. Run it all easy. Your legs will be tired from Thursday — that is the point."},
+  ]},
+  {wk:5,label:"Race Simulation",sessions:[
+    {day:"Tuesday",type:"Easy",dist:"3 miles",pace:"Easy — 11:30/mi",note:"Recovery run. Easy only. Your body is adapting from week 4 volume. Don't fight it."},
+    {day:"Thursday",type:"Race Simulation",dist:"5 miles at goal pace",pace:"9:36/mi — sub-60 race pace",note:"5 continuous miles at exact race pace. This is your confidence builder. If you can run 5 miles at 9:36 you can run 6.2. You will want to stop around mile 3. Don't."},
+    {day:"Weekend",type:"Long run",dist:"6 miles",pace:"Easy 11:00/mi",note:"Reduced from last week. Sharpening not building. Finish feeling strong."},
+  ]},
+  {wk:6,label:"Taper + Race",sessions:[
+    {day:"Tuesday",type:"Easy + Strides",dist:"2 miles + 4 strides",pace:"Easy with 4 x 100m fast",note:"Fresh legs. Don't push. Strides just to remind your legs what fast feels like."},
+    {day:"Thursday",type:"Tune-up",dist:"2 miles easy + 1 mile at goal pace",pace:"9:36/mi for the last mile",note:"Last quality workout. Keep it short. You're ready. Trust your training."},
+    {day:"Weekend",type:"RACE DAY 🏁",dist:"10K",pace:"Goal: SUB 60:00 — go get it",note:"Miles 1-2: Hold back. Run 9:45/mi even if it feels easy. Miles 3-4: Settle into 9:36 pace. Miles 5-6: If you have anything left give it everything. You have trained for this."},
+  ]},
+];
+
+/* JEWEL STATE */
+let JST = {
+  wt: 170, wtLog: [], wd: {}, wk: 1, day: 'Tuesday',
+  pr10k: '66:00', cfHistory: []
+};
+
+function jsave(){try{localStorage.setItem('jewel_v1',JSON.stringify(JST));}catch(e){}}
+function jload(){try{const d=localStorage.getItem('jewel_v1');if(d)JST={...JST,...JSON.parse(d)};}catch(e){}}
+jload();
+
+/* PROFILE SWITCHER */
+let activeProfile = 'forge';
+
+function switchProfile(p){
+  activeProfile = p;
+  const forgeEl = document.getElementById('tab-dash')?.closest('.section')?.parentElement;
+  const forgeTabs = document.querySelector('.tabs:not(#jewel-tabs)');
+  const jewelProfile = document.getElementById('jewel-profile');
+  const forgeProfileSections = document.querySelectorAll('body > .section, body > div.tabs:not(#jewel-tabs)');
+  const forgeBtn = document.getElementById('forge-btn');
+  const jewelBtn = document.getElementById('jewel-btn');
+  const nav = document.querySelector('.nav-logo');
+
+  if(p === 'jewel'){
+    // Hide forge tabs and show jewel
+    document.querySelector('.tabs').style.display = 'none';
+    document.querySelectorAll('body > .section').forEach(s=>s.style.display='none');
+    jewelProfile.style.display = 'block';
+    document.body.classList.add('jewel-theme');
+    forgeBtn.className = 'profile-btn';
+    jewelBtn.className = 'profile-btn jewel-active';
+    if(nav)nav.textContent = 'JEWEL';
+    document.querySelector('.nav-sub').textContent = '12-Week Program';
+    document.getElementById('nav-wt').textContent = JST.wt + ' lbs';
+    showJTab('jdash');
+    renderJDash();
+  } else {
+    document.querySelector('.tabs').style.display = '';
+    document.querySelectorAll('body > .section').forEach(s=>s.style.display='');
+    jewelProfile.style.display = 'none';
+    document.body.classList.remove('jewel-theme');
+    forgeBtn.className = 'profile-btn forge-active';
+    jewelBtn.className = 'profile-btn';
+    if(nav)nav.textContent = 'FORGE';
+    document.querySelector('.nav-sub').textContent = '8-Week Program';
+    document.getElementById('nav-wt').textContent = ST.wt + ' lbs';
+    showTab('dash');
+  }
+}
+
+function showJTab(t){
+  document.querySelectorAll('#jewel-profile .tab-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+t+"'")));
+  document.querySelectorAll('#jewel-profile .section').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('tab-'+t);
+  if(el) el.classList.add('active');
+  if(t==='jdash')renderJDash();
+  if(t==='jstr')renderJStr();
+  if(t==='jrun')renderJRun();
+  if(t==='jcf')renderJCF();
+  if(t==='jgroc'){renderGroc();renderJGrocCount();}
+}
+
+/* JEWEL DASHBOARD */
+function logJWt(){
+  const v=parseFloat(document.getElementById('jwi').value);if(!v||v<80||v>400)return;
+  JST.wt=v;JST.wtLog.unshift({date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),wt:v});
+  if(JST.wtLog.length>14)JST.wtLog.pop();jsave();renderJDash();
+}
+
+function logJ10K(){
+  const v=document.getElementById('j10k-inp').value.trim();if(!v)return;
+  JST.pr10k=v;jsave();renderJDash();
+  document.getElementById('j10k-inp').value='';
+}
+
+function renderJDash(){
+  document.getElementById('jw').textContent=JST.wt;
+  document.getElementById('jl').textContent=Math.max(0,170-JST.wt).toFixed(1);
+  document.getElementById('j10k').textContent=JST.pr10k;
+  document.getElementById('j10k-display').textContent=JST.pr10k;
+  document.getElementById('nav-wt').textContent=JST.wt+' lbs';
+  // 10K progress bar - from 66:00 to 59:59
+  const parseMM = s=>{const p=s.split(':');return parseInt(p[0])*60+(parseInt(p[1])||0);};
+  const current=parseMM(JST.pr10k);const start=66*60;const goal=60*60;
+  const pct=Math.min(100,Math.max(0,((start-current)/(start-goal))*100));
+  document.getElementById('j10k-prog').style.width=pct+'%';
+  // Weight history
+  const wh=document.getElementById('jwh');
+  if(!JST.wtLog.length){wh.innerHTML='<div style="font-size:11px;color:var(--text3);text-align:center;padding:8px">No weight logs yet</div>';return;}
+  wh.innerHTML=JST.wtLog.map((e,i)=>{
+    const prev=JST.wtLog[i+1];let ch='';
+    if(prev){const d=(e.wt-prev.wt).toFixed(1);const cl=d<0?'up':d>0?'dn':'nc';const lb=d<0?d+' lbs':d>0?'+'+d+' lbs':'—';ch='<span class="hch '+cl+'">'+lb+'</span>';}
+    return '<div class="hist-item"><span class="hdate">'+e.date+'</span><span class="hval">'+e.wt+' lbs</span>'+ch+'</div>';
+  }).join('');
+}
+
+/* JEWEL STRENGTH */
+function jPhaseFor(w){for(const p of JPH)if(p.weeks.includes(w))return p;return JPH[0];}
+
+function renderJStr(){
+  const wkBar=document.getElementById('jwk-bar');wkBar.innerHTML='';
+  for(let i=1;i<=12;i++){
+    const ph=jPhaseFor(i);const hasDone=ph.days.some(d=>JST.wd['done__'+i+'__'+d.day]);
+    const b=document.createElement('button');b.className='wk-btn'+(i===JST.wk?' active':'')+(hasDone&&i!==JST.wk?' has-data':'');
+    b.textContent='Wk '+i+(hasDone?' ✓':'');const wi=i;b.addEventListener('click',()=>{JST.wk=wi;jsave();renderJStr();});wkBar.appendChild(b);
+  }
+  const dayBar=document.getElementById('jday-bar');dayBar.innerHTML='';
+  const JDAYS=['Tuesday','Thursday','Weekend'];const JLBLS={Tuesday:'Tue',Thursday:'Thu',Weekend:'Weekend'};
+  const ph=jPhaseFor(JST.wk);
+  JDAYS.forEach(dn=>{
+    const exists=ph.days.some(d=>d.day===dn);if(!exists)return;
+    const dk='done__'+JST.wk+'__'+dn;const isDone=JST.wd[dk];
+    const b=document.createElement('button');b.className='day-btn'+(dn===JST.day?' active':'')+(isDone?' done':'');
+    b.innerHTML=JLBLS[dn]+'<span class="day-dot-sm"></span>';
+    b.addEventListener('click',()=>{JST.day=dn;renderJDayView();});dayBar.appendChild(b);
+  });
+  renderJDayView();
+}
+
+function renderJDayView(){
+  const cont=document.getElementById('jstr-content');cont.innerHTML='';
+  const ph=jPhaseFor(JST.wk);
+  const badge=document.createElement('div');badge.className='phase-badge';
+  badge.style.cssText='background:'+ph.color+'22;border:1px solid '+ph.color+'55;color:'+ph.color;
+  badge.textContent=ph.label+' — Week '+JST.wk;cont.appendChild(badge);
+  const dayData=ph.days.find(d=>d.day===JST.day);
+  if(!dayData){cont.innerHTML+='<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">No workout scheduled for this slot</div>';return;}
+  const dk='done__'+JST.wk+'__'+dayData.day;const done=JST.wd[dk];
+  const wc=document.createElement('div');wc.className='workout-card';wc.style.marginTop='8px';
+  const whDiv=document.createElement('div');whDiv.className='workout-header';
+  const whInfo=document.createElement('div');
+  whInfo.innerHTML='<div class="workout-day-lbl" style="color:#ec4899">'+dayData.day+' · '+dayData.type+'</div><div class="workout-name">'+dayData.name+'</div>';
+  const doneBtn=document.createElement('button');doneBtn.className='btn-done'+(done?' completed':'');
+  doneBtn.textContent=done?'✓ Done':'Mark done';
+  (function(k){doneBtn.addEventListener('click',function(){JST.wd[k]=!JST.wd[k];this.textContent=JST.wd[k]?'✓ Done':'Mark done';this.className='btn-done'+(JST.wd[k]?' completed':'');jsave();});})(dk);
+  whDiv.appendChild(whInfo);whDiv.appendChild(doneBtn);wc.appendChild(whDiv);
+  // Exercises
+  dayData.exercises.forEach(ex=>{
+    const div=document.createElement('div');div.className='ex-row'+(ex.m&&ex.m!=='compound'?' focus-muscle':'');
+    const ns=typeof ex.sets==='number'?ex.sets:1;
+    const mt=ex.m&&MTAGS[ex.m]?'<span class="mtag '+MTAGS[ex.m]+'">'+MLBLS[ex.m]+'</span>':'';
+    const ni=ex.note?'<div class="ex-note">'+ex.note+'</div>':'';
+    let html='<div class="ex-top" style="align-items:center"><div style="flex:1"><div class="ex-name">'+ex.n+'</div><div class="ex-meta">'+ex.sets+'×'+ex.reps+' · '+ex.eq+'</div>'+mt+ni+'</div></div>';
+    html+='<div class="sets-container">';
+    for(let s=1;s<=ns;s++){
+      const sk=JST.wk+'__'+dayData.day+'__'+ex.n+'__s'+s;const sv=JST.wd[sk]||{};
+      const cw=sv.wt!==undefined&&sv.wt!==''?sv.wt:'';const cr=sv.reps!==undefined&&sv.reps!==''?sv.reps:'';
+      const exEnc=encodeURIComponent(ex.n);const dayEnc=encodeURIComponent(dayData.day);const wtInc=getWtIncrement(ex.n);
+      html+='<div class="set-row'+(cw?' done-set':'')+'" id="jsr__'+sk+'">'
+        +'<div class="set-num">S'+s+'</div>'
+        +'<div class="set-field"><div class="set-field-lbl">Weight</div><div class="adj-row">'
+        +'<button class="adj-btn" data-sk="'+sk+'" data-f="wt" data-d="-'+wtInc+'" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">−</button>'
+        +'<div class="set-val-display" id="jwv__'+sk+'">'+(cw||'—')+'</div>'
+        +'<button class="adj-btn" data-sk="'+sk+'" data-f="wt" data-d="'+wtInc+'" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">+</button>'
+        +'</div></div>'
+        +'<div class="set-sep">×</div>'
+        +'<div class="set-field"><div class="set-field-lbl">Reps</div><div class="adj-row">'
+        +'<button class="adj-btn" data-sk="'+sk+'" data-f="reps" data-d="-1" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">−</button>'
+        +'<div class="set-val-display" id="jrv__'+sk+'">'+(cr||'—')+'</div>'
+        +'<button class="adj-btn" data-sk="'+sk+'" data-f="reps" data-d="1" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">+</button>'
+        +'</div></div></div>';
+    }
+    html+='</div>';
+    div.innerHTML=html;wc.appendChild(div);
+  });
+  cont.appendChild(wc);
+}
+
+function adjJFromBtn(btn){
+  const scrollY=window.scrollY;
+  const sk=btn.dataset.sk;const f=btn.dataset.f;const d=parseFloat(btn.dataset.d);
+  if(!JST.wd[sk])JST.wd[sk]={};
+  const cur=JST.wd[sk][f]!==undefined&&JST.wd[sk][f]!==''?parseFloat(JST.wd[sk][f])||0:0;
+  const neo=Math.max(0,cur+d);JST.wd[sk][f]=neo.toString();
+  const wtEl=document.getElementById('jwv__'+sk);const rpEl=document.getElementById('jrv__'+sk);
+  if(f==='wt'&&wtEl)wtEl.textContent=neo||'—';
+  if(f==='reps'&&rpEl)rpEl.textContent=neo||'—';
+  jsave();requestAnimationFrame(()=>window.scrollTo(0,scrollY));
+}
+
+/* JEWEL RUNNING */
+function renderJRun(){
+  const el=document.getElementById('jrun-content');el.innerHTML='';
+  const typeColors={Easy:'#22c55e',Tempo:'#f59e0b',Intervals:'#ef4444','Long run':'#3b82f6',Strides:'#a855f7','Race pace run':'#f97316','Race simulation':'#f97316','Tune-up':'#14b8a6','RACE DAY':'#ec4899'};
+  JRUNS.forEach(wk=>{
+    const card=document.createElement('div');card.className='card';card.style.marginBottom='10px';
+    card.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-weight:600;font-size:13px">Week '+wk.wk+'</span><span style="font-size:10px;color:var(--text3)">'+wk.label+'</span></div>';
+    wk.sessions.forEach(s=>{
+      const c=typeColors[s.type]||'#888';const rc=document.createElement('div');
+      rc.style.cssText='background:var(--surface2);border-radius:10px;padding:12px;margin-bottom:8px;border-left:3px solid '+c;
+      rc.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">'
+        +'<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:'+c+';margin-bottom:2px">'+s.day+' · '+s.type+'</div>'
+        +'<div style="font-size:18px;font-weight:700">'+s.dist+'</div></div></div>'
+        +'<div style="font-size:11px;color:var(--text3);margin-bottom:4px">'+s.pace+'</div>'
+        +(s.note?'<div style="font-size:10px;color:var(--text3);font-style:italic;margin-top:4px">'+s.note+'</div>':'');
+      card.appendChild(rc);
+    });
+    el.appendChild(card);
+  });
+}
+
+/* JEWEL CROSSFIT LOG */
+function logCFWod(){
+  const wod=document.getElementById('cf-wod').value.trim();
+  const score=document.getElementById('cf-score').value.trim();
+  if(!wod)return;
+  if(!JST.cfHistory)JST.cfHistory=[];
+  JST.cfHistory.unshift({date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),wod,score});
+  if(JST.cfHistory.length>30)JST.cfHistory.pop();
+  jsave();renderJCF();
+  document.getElementById('cf-wod').value='';document.getElementById('cf-score').value='';
+}
+
+function renderJCF(){
+  const el=document.getElementById('cf-history');if(!el)return;
+  if(!JST.cfHistory||!JST.cfHistory.length){el.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px 0">No WODs logged yet</div>';return;}
+  el.innerHTML=JST.cfHistory.map(w=>'<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:11px;color:#f472b6;font-weight:600">'+w.date+'</span><span style="font-size:11px;color:var(--green)">'+w.score+'</span></div><div style="font-size:12px;color:var(--text2)">'+w.wod+'</div></div>').join('');
+}
+
+function renderJGrocCount(){
+  let tot=0,ck=0;
+  for(const[,items] of Object.entries(GROC))items.forEach(i=>{tot++;if(ST.groc['g__'+i.n])ck++;});
+  const jgc=document.getElementById('jgc');const jgt=document.getElementById('jgt');
+  if(jgc)jgc.textContent=ck;if(jgt)jgt.textContent=tot;
+  // Render grocery list in jewel tab
+  const jgl=document.getElementById('jglist');if(jgl){const gl=document.getElementById('glist');if(gl)jgl.innerHTML=gl.innerHTML;}
+}
+
+
+/* ══════════════════════════════════════
+   PHOTO SCAN — AI POWERED
+   ══════════════════════════════════════ */
+
+let scannedData = {};
+
+function saveApiKey(){
+  const key = document.getElementById('api-key-input').value.trim();
+  if(!key){return;}
+  localStorage.setItem('forge_api_key', key);
+  updateApiKeyStatus();
+  document.getElementById('api-key-input').value = '';
+}
+
+function getApiKey(){
+  return localStorage.getItem('forge_api_key')||'';
+}
+
+function updateApiKeyStatus(){
+  const key = getApiKey();
+  const el = document.getElementById('api-key-status');
+  const jel = document.getElementById('jewel-api-status');
+  const msg = key ? '✓ API key saved — photo scanning enabled' : '⚠ No API key — add one above to enable scanning';
+  const col = key ? 'var(--green)' : 'var(--amber)';
+  if(el){el.textContent=msg;el.style.color=col;}
+  if(jel){jel.textContent=msg;jel.style.color=col;}
+}
+
+function handleScan(scanId, input){
+  const file = input.files[0];
+  if(!file) return;
+  // Show preview
+  const preview = document.getElementById(scanId+'-preview');
+  if(preview){
+    const reader = new FileReader();
+    reader.onload = e => { preview.src = e.target.result; preview.style.display='block'; };
+    reader.readAsDataURL(file);
+  }
+  // Check API key
+  const key = getApiKey();
+  if(!key){
+    alert('Please add your Anthropic API key in the Scan tab first. See the Settings tab for instructions.');
+    return;
+  }
+  // Show loading
+  const loading = document.getElementById(scanId+'-loading');
+  const result = document.getElementById(scanId+'-result');
+  if(loading) loading.style.display='block';
+  if(result) result.style.display='none';
+  // Read file as base64
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const base64 = e.target.result.split(',')[1];
+    const mediaType = file.type || 'image/jpeg';
+    try {
+      await scanImage(scanId, base64, mediaType, key);
+    } catch(err){
+      if(loading) loading.style.display='none';
+      alert('Scan failed: ' + err.message);
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function scanImage(scanId, base64, mediaType, apiKey){
+  const prompts = {
+    'forge-watch': 'This is an Apple Watch workout screenshot. Extract ALL of these fields as JSON: {"type":"workout type","date":"","start_time":"","end_time":"","duration":"","active_calories":0,"total_calories":0,"avg_hr":0,"max_hr":0,"min_hr":0}. Return ONLY the JSON object, nothing else.',
+    'forge-str': 'This is a strength training screenshot. Extract ALL exercises with sets, weights, and reps as JSON: {"exercises":[{"name":"","sets":[{"weight":0,"reps":0}]}]}. Return ONLY the JSON object, nothing else.',
+    'jewel-watch': 'This is an Apple Watch workout screenshot. Extract ALL of these fields as JSON: {"type":"workout type","date":"","start_time":"","end_time":"","duration":"","active_calories":0,"total_calories":0,"avg_hr":0,"max_hr":0,"min_hr":0}. Return ONLY the JSON object, nothing else.',
+    'jewel-cf': 'This is a CrossFit workout screenshot. Extract the complete WOD as JSON including: {"wod_name":"","format":"e.g. AMRAP/For Time/EMOM","time_cap":"","movements":[{"name":"","reps":"","weight":"","scaling":"suggest a scaling option for intermediate athlete e.g. reduce weight by 20% or do ring rows instead of pull-ups"}],"score":"","notes":"","rx_or_scaled":""}. Return ONLY the JSON object, nothing else.',
+    'jewel-run': 'This is a running workout screenshot. Extract ALL fields as JSON: {"date":"","distance":"","duration":"","avg_pace":"","avg_hr":0,"calories":0,"elevation":"","splits":[]}. Return ONLY the JSON object, nothing else.',
+  };
+
+  const prompt = prompts[scanId] || prompts['forge-watch'];
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-opus-4-5',
+      max_tokens: 1024,
+      messages: [{
+        role: 'user',
+        content: [
+          {type:'image', source:{type:'base64', media_type:mediaType, data:base64}},
+          {type:'text', text:prompt}
+        ]
+      }]
+    })
+  });
+
+  if(!response.ok){
+    const err = await response.json();
+    throw new Error(err.error?.message || 'API error '+response.status);
+  }
+
+  const data = await response.json();
+  const text = data.content[0]?.text || '';
+
+  // Parse JSON from response
+  let parsed;
+  try {
+    const clean = text.replace(/```json|```/g,'').trim();
+    parsed = JSON.parse(clean);
+  } catch(e){
+    throw new Error('Could not parse workout data from image. Try a clearer screenshot.');
+  }
+
+  // Store and display
+  scannedData[scanId] = parsed;
+  displayScanResult(scanId, parsed);
+
+  // Save to history
+  const histKey = scanId.includes('jewel') ? 'jewel' : 'forge';
+  saveScanHistory(histKey, scanId, parsed);
+}
+
+function displayScanResult(scanId, data){
+  const loading = document.getElementById(scanId+'-loading');
+  const result = document.getElementById(scanId+'-result');
+  const fields = document.getElementById(scanId+'-fields');
+  if(loading) loading.style.display='none';
+  if(!result || !fields) return;
+
+  let html = '';
+  if(scanId.includes('cf')){
+    // CrossFit display
+    html += '<div class="scan-field"><span class="scan-field-label">WOD</span><span class="scan-field-value">'+(data.wod_name||'—')+'</span></div>';
+    html += '<div class="scan-field"><span class="scan-field-label">Format</span><span class="scan-field-value">'+(data.format||'—')+'</span></div>';
+    html += '<div class="scan-field"><span class="scan-field-label">Score</span><span class="scan-field-value" style="color:var(--green)">'+(data.score||'—')+'</span></div>';
+    if(data.movements && data.movements.length){
+      html += '<div style="margin-top:8px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px">Movements</div>';
+      data.movements.forEach(m=>{
+        html += '<div style="padding:6px 0;border-bottom:1px solid var(--border)">'
+          +'<div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text2)">'+m.name+'</span><span style="font-weight:600">'+m.reps+(m.weight?' @ '+m.weight:'')+'</span></div>'
+          +(m.scaling?'<div style="font-size:10px;color:#f59e0b;margin-top:2px">⚡ Scale: '+m.scaling+'</div>':'')
+          +'</div>';
+      });
+    }
+    if(data.rx_or_scaled) html += '<div class="scan-field"><span class="scan-field-label">RX / Scaled</span><span class="scan-field-value" style="color:var(--blue)">'+data.rx_or_scaled+'</span></div>';
+  } else if(scanId.includes('run')){
+    html += '<div class="scan-field"><span class="scan-field-label">Distance</span><span class="scan-field-value">'+(data.distance||'—')+'</span></div>';
+    html += '<div class="scan-field"><span class="scan-field-label">Duration</span><span class="scan-field-value">'+(data.duration||'—')+'</span></div>';
+    html += '<div class="scan-field"><span class="scan-field-label">Avg Pace</span><span class="scan-field-value">'+(data.avg_pace||'—')+'/mi</span></div>';
+    html += '<div class="scan-field"><span class="scan-field-label">Avg HR</span><span class="scan-field-value">'+(data.avg_hr||'—')+' bpm</span></div>';
+    html += '<div class="scan-field"><span class="scan-field-label">Calories</span><span class="scan-field-value">'+(data.calories||'—')+'</span></div>';
+  } else if(scanId.includes('str')){
+    if(data.exercises && data.exercises.length){
+      data.exercises.forEach(ex=>{
+        html += '<div class="scan-field"><span class="scan-field-label">'+ex.name+'</span><span class="scan-field-value">'+(ex.sets?ex.sets.length+'×'+ex.sets[0]?.weight+'lbs':'—')+'</span></div>';
+      });
+    }
+  } else {
+    // Watch summary
+    html += '<div class="scan-field"><span class="scan-field-label">Type</span><span class="scan-field-value">'+(data.type||'—')+'</span></div>';
+    html += '<div class="scan-field"><span class="scan-field-label">Duration</span><span class="scan-field-value">'+(data.duration||'—')+'</span></div>';
+    html += '<div class="scan-field"><span class="scan-field-label">Active cal</span><span class="scan-field-value" style="color:var(--green)">'+(data.active_calories||'—')+'</span></div>';
+    html += '<div class="scan-field"><span class="scan-field-label">Total cal</span><span class="scan-field-value">'+(data.total_calories||'—')+'</span></div>';
+    html += '<div class="scan-field"><span class="scan-field-label">Avg HR</span><span class="scan-field-value">'+(data.avg_hr||'—')+' bpm</span></div>';
+    html += '<div class="scan-field"><span class="scan-field-label">HR Range</span><span class="scan-field-value">'+(data.min_hr||'—')+'–'+(data.max_hr||'—')+'</span></div>';
+    if(data.start_time) html += '<div class="scan-field"><span class="scan-field-label">Time</span><span class="scan-field-value">'+(data.start_time||'')+'–'+(data.end_time||'')+'</span></div>';
+  }
+
+  fields.innerHTML = html;
+  result.style.display='block';
+}
+
+function logScannedWorkout(profile){
+  const scanId = profile+'-watch';
+  const data = scannedData[scanId];
+  if(!data) return;
+  const entry = {
+    date: data.date || new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),
+    label: data.type || 'Workout',
+    start: data.start_time||'', end: data.end_time||'',
+    duration: data.duration||'',
+    activeCal: data.active_calories||0,
+    totalCal: data.total_calories||0,
+    avgHR: data.avg_hr||0,
+    hrRange: (data.min_hr||'?')+'-'+(data.max_hr||'?')
+  };
+  if(profile==='forge'){
+    if(!ST.watchHistory) ST.watchHistory=[];
+    ST.watchHistory.unshift({...entry, type:'str'});
+    save();
+  } else {
+    if(!JST.watchHistory) JST.watchHistory=[];
+    JST.watchHistory.unshift({...entry, type:'str'});
+    jsave();
+  }
+  document.getElementById(scanId+'-result').style.display='none';
+  document.getElementById(scanId+'-preview').style.display='none';
+  saveScanHistory(profile, scanId, data);
+  alert('✓ Workout logged to '+profile.charAt(0).toUpperCase()+profile.slice(1)+'!');
+}
+
+function logScannedCF(){
+  const data = scannedData['jewel-cf'];
+  if(!data) return;
+  if(!JST.cfHistory) JST.cfHistory=[];
+  const movements = data.movements ? data.movements.map(m=>m.name+(m.reps?' '+m.reps:'')+(m.weight?' @ '+m.weight:'')).join(' · ') : '';
+  JST.cfHistory.unshift({
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),
+    wod: (data.wod_name||'WOD') + (data.format?' — '+data.format:'') + (movements?' | '+movements:''),
+    score: data.score||'',
+    movements: data.movements||[]
+  });
+  jsave();
+  document.getElementById('jewel-cf-result').style.display='none';
+  document.getElementById('jewel-cf-preview').style.display='none';
+  renderJCF();
+  alert('✓ CrossFit WOD logged!');
+}
+
+function logScannedRun(){
+  const data = scannedData['jewel-run'];
+  if(!data) return;
+  if(!JST.runHistory) JST.runHistory=[];
+  JST.runHistory.unshift({
+    date: data.date || new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),
+    distance: data.distance||'',
+    duration: data.duration||'',
+    pace: data.avg_pace||'',
+    hr: data.avg_hr||0,
+    calories: data.calories||0
+  });
+  jsave();
+  document.getElementById('jewel-run-result').style.display='none';
+  document.getElementById('jewel-run-preview').style.display='none';
+  alert('✓ Run logged!');
+}
+
+function logScannedStr(profile){
+  const data = scannedData[profile+'-str'];
+  if(!data || !data.exercises) return;
+  // Log each exercise into the current week/day
+  data.exercises.forEach(ex=>{
+    ex.sets.forEach((s,i)=>{
+      const sk = ST.wk+'__'+ST.day+'__'+ex.name+'__s'+(i+1);
+      if(!ST.wd[sk]) ST.wd[sk]={};
+      ST.wd[sk].wt = s.weight.toString();
+      ST.wd[sk].reps = s.reps.toString();
+    });
+  });
+  save();
+  renderStr();
+  document.getElementById(profile+'-str-result').style.display='none';
+  alert('✓ '+data.exercises.length+' exercises logged to current workout!');
+}
+
+function saveScanHistory(profile, scanId, data){
+  const key = profile+'_scan_history';
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem(key)||'[]'); } catch(e){}
+  history.unshift({
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}),
+    type: scanId.split('-')[1],
+    data: data
+  });
+  if(history.length>20) history.pop();
+  localStorage.setItem(key, JSON.stringify(history));
+  renderScanHistory(profile);
+}
+
+function renderScanHistory(profile){
+  const key = profile+'_scan_history';
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem(key)||'[]'); } catch(e){}
+  const el = document.getElementById(profile+'-scan-history');
+  if(!el) return;
+  if(!history.length){el.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px 0">No scans yet</div>';return;}
+  el.innerHTML = history.slice(0,10).map(h=>{
+    const label = h.type==='cf'?'CrossFit WOD':h.type==='run'?'Run':h.type==='watch'?'Workout':'Scan';
+    const summary = h.data.active_calories?h.data.active_calories+' cal':h.data.score||h.data.distance||'';
+    return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">'+label+'</span><span style="color:var(--text3)">'+h.date+'</span><span style="color:var(--green);font-weight:600">'+summary+'</span></div>';
+  }).join('');
+}
+
+// Init API key status on load
+setTimeout(updateApiKeyStatus, 500);
+
 </script>
+
+<!-- JEWEL PROFILE (hidden by default) -->
+<div id="jewel-profile" style="display:none">
+<div class="tabs" id="jewel-tabs">
+  <button class="tab-btn active" onclick="showJTab('jdash')">Dashboard</button>
+  <button class="tab-btn" onclick="showJTab('jstr')">Strength</button>
+  <button class="tab-btn" onclick="showJTab('jrun')">Running</button>
+  <button class="tab-btn" onclick="showJTab('jcf')">CrossFit</button>
+  <button class="tab-btn" onclick="showJTab('jscan')">📷 Scan</button>
+  <button class="tab-btn" onclick="showJTab('jgroc')">Grocery</button>
+</div>
+
+<!-- JEWEL DASHBOARD -->
+<div id="tab-jdash" class="section active">
+  <div class="alert" style="background:rgba(236,72,153,0.1);border:1px solid rgba(236,72,153,0.3);color:#f472b6;border-radius:10px;padding:10px 13px;font-size:12px;margin-bottom:10px">
+    <strong>Goal: Sub 60 min 10K</strong> · Strength Tue/Thu/Weekend · CrossFit Mon/Wed/Fri · Running Tue/Thu + Weekend
+  </div>
+  <div class="metrics">
+    <div class="metric"><div class="metric-val" style="color:#ec4899" id="jw">170</div><div class="metric-label">lbs now</div></div>
+    <div class="metric"><div class="metric-val" style="color:var(--green)" id="jl">0</div><div class="metric-label">lbs lost</div></div>
+    <div class="metric"><div class="metric-val" style="color:var(--amber)" id="j10k">66:00</div><div class="metric-label">10K PR</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Weight log</div>
+    <div class="row-input"><input type="number" id="jwi" placeholder="lbs" value="170" step="0.1"><button class="btn-primary" style="background:#ec4899" onclick="logJWt()">Log</button></div>
+    <div class="prog-track"><div class="prog-fill" id="jwp" style="width:0%;background:#ec4899"></div></div>
+    <div class="prog-labels"><span>170 lbs start</span><span>Goal: 145 lbs</span></div>
+    <div id="jwh" style="margin-top:10px"><div style="font-size:11px;color:var(--text3);text-align:center;padding:8px">No weight logs yet</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">This week</div>
+    <div style="font-size:12px;line-height:2.2;color:var(--text2)">
+      <div><span style="color:#ec4899;font-weight:600;margin-right:8px">Mon</span>CrossFit</div>
+      <div><span style="color:var(--blue);font-weight:600;margin-right:8px">Tue</span>Upper strength + Easy run 2–3 mi</div>
+      <div><span style="color:#ec4899;font-weight:600;margin-right:8px">Wed</span>CrossFit</div>
+      <div><span style="color:var(--blue);font-weight:600;margin-right:8px">Thu</span>Lower strength + Speed work</div>
+      <div><span style="color:#ec4899;font-weight:600;margin-right:8px">Fri</span>CrossFit</div>
+      <div><span style="color:var(--amber);font-weight:600;margin-right:8px">Weekend</span>Full body strength OR long run · rest the other day</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">10K Progress</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div><div style="font-size:22px;font-weight:700;color:#ec4899" id="j10k-display">66:00</div><div style="font-size:10px;color:var(--text3)">Current PR</div></div>
+      <div style="text-align:right"><div style="font-size:22px;font-weight:700;color:var(--green)">59:59</div><div style="font-size:10px;color:var(--text3)">Goal</div></div>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="j10k-prog" style="width:0%;background:#ec4899"></div></div>
+    <div class="prog-labels"><span>66:00</span><span>Sub 60:00</span></div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <input type="text" id="j10k-inp" placeholder="New PR (mm:ss)" style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;padding:8px 10px;font-family:inherit">
+      <button class="btn-primary" style="background:#ec4899" onclick="logJ10K()">Log PR</button>
+    </div>
+  </div>
+</div>
+
+<!-- JEWEL STRENGTH -->
+<div id="tab-jstr" class="section">
+  <div style="background:rgba(236,72,153,0.1);border:1px solid rgba(236,72,153,0.3);border-radius:10px;padding:9px 13px;margin-bottom:12px;font-size:11px;color:#f472b6">
+    Strength complements CrossFit — Tue = Upper · Thu = Lower · Weekend = Full body
+  </div>
+  <div id="jwk-bar" style="display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px"></div>
+  <div style="display:flex;overflow-x:auto;scrollbar-width:none;margin-bottom:12px" id="jday-bar"></div>
+  <div id="jstr-content"></div>
+</div>
+
+<!-- JEWEL RUNNING -->
+<div id="tab-jrun" class="section">
+  <div style="background:rgba(236,72,153,0.1);border:1px solid rgba(236,72,153,0.3);border-radius:10px;padding:9px 13px;margin-bottom:12px;font-size:11px;color:#f472b6">
+    Goal: Sub 60 min 10K · Current PR: 66:00 · Need to cut ~42 sec/mile
+  </div>
+  <div id="jrun-content"></div>
+</div>
+
+<!-- JEWEL CROSSFIT -->
+<div id="tab-jcf" class="section">
+  <div class="crossfit-banner">
+    <div class="cf-title">CrossFit — Mon / Wed / Fri</div>
+    <div class="cf-sub">Your CrossFit programming stays as-is · Track your WOD scores and PRs here</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Log today's WOD</div>
+    <div style="margin-bottom:8px"><input type="text" id="cf-wod" placeholder="WOD description or name" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;padding:8px 10px;font-family:inherit;margin-bottom:6px"><input type="text" id="cf-score" placeholder="Score / time / rounds" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;padding:8px 10px;font-family:inherit"></div>
+    <button class="btn-primary" style="background:#ec4899;width:100%" onclick="logCFWod()">Save WOD</button>
+  </div>
+  <div class="card"><div class="card-title">WOD history</div><div id="cf-history"><div style="font-size:11px;color:var(--text3);padding:8px 0">No WODs logged yet</div></div></div>
+</div>
+
+<!-- JEWEL GROCERY (shared list) -->
+<div id="tab-jgroc" class="section">
+  <div style="background:var(--blue-dim);border:1px solid rgba(59,130,246,0.3);color:#93c5fd;border-radius:10px;padding:10px 13px;font-size:12px;margin-bottom:10px">Shared grocery list with FORGE — check items in either profile</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div style="font-size:12px;color:var(--text2)"><span id="jgc">0</span> / <span id="jgt">0</span> checked</div>
+    <button class="btn-sm" onclick="clearGroc()">Clear all</button>
+  </div>
+  <div id="jglist"></div>
+</div>
+
+
+<!-- JEWEL SCAN -->
+<div id="tab-jscan" class="section">
+  <div class="card">
+    <div class="card-title">API Key</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Shared with FORGE — set once in FORGE → Scan tab</div>
+    <div id="jewel-api-status" style="font-size:11px"></div>
+  </div>
+
+  <div class="scan-card">
+    <div class="scan-title">⌚ Scan Apple Watch Workout</div>
+    <div class="scan-upload-area">
+      <input type="file" accept="image/*" id="jewel-watch-file" onchange="handleScan('jewel-watch',this)">
+      <div class="scan-icon">⌚</div>
+      <div class="scan-label">Tap to upload Watch screenshot</div>
+      <div class="scan-sub">Strength, running, HIIT — all workout types</div>
+    </div>
+    <img id="jewel-watch-preview" class="scan-preview">
+    <div class="scan-loading" id="jewel-watch-loading"><div class="spin"></div><div>Reading your workout data...</div></div>
+    <div class="scan-result" id="jewel-watch-result">
+      <div class="scan-result-title">✓ Workout detected</div>
+      <div id="jewel-watch-fields"></div>
+      <button class="btn-primary" style="width:100%;margin-top:10px;background:#ec4899" onclick="logScannedWorkout('jewel')">Log this workout</button>
+    </div>
+  </div>
+
+  <div class="scan-card">
+    <div class="scan-title">🏋️ Scan CrossFit Workout</div>
+    <div class="scan-upload-area">
+      <input type="file" accept="image/*" id="jewel-cf-file" onchange="handleScan('jewel-cf',this)">
+      <div class="scan-icon">🏋️</div>
+      <div class="scan-label">Screenshot your CrossFit app or whiteboard</div>
+      <div class="scan-sub">AI reads every movement, weights, and rounds</div>
+    </div>
+    <img id="jewel-cf-preview" class="scan-preview">
+    <div class="scan-loading" id="jewel-cf-loading"><div class="spin"></div><div>Reading CrossFit workout...</div></div>
+    <div class="scan-result" id="jewel-cf-result">
+      <div class="scan-result-title">✓ CrossFit WOD detected</div>
+      <div id="jewel-cf-fields"></div>
+      <button class="btn-primary" style="width:100%;margin-top:10px;background:#ec4899" onclick="logScannedCF()">Log this WOD</button>
+    </div>
+  </div>
+
+  <div class="scan-card">
+    <div class="scan-title">🏃 Scan Run Data</div>
+    <div class="scan-upload-area">
+      <input type="file" accept="image/*" id="jewel-run-file" onchange="handleScan('jewel-run',this)">
+      <div class="scan-icon">🏃</div>
+      <div class="scan-label">Upload run summary screenshot</div>
+      <div class="scan-sub">Apple Watch, Garmin, Strava — any app</div>
+    </div>
+    <img id="jewel-run-preview" class="scan-preview">
+    <div class="scan-loading" id="jewel-run-loading"><div class="spin"></div><div>Reading run data...</div></div>
+    <div class="scan-result" id="jewel-run-result">
+      <div class="scan-result-title">✓ Run detected</div>
+      <div id="jewel-run-fields"></div>
+      <button class="btn-primary" style="width:100%;margin-top:10px;background:#ec4899" onclick="logScannedRun()">Log this run</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Recent scans</div>
+    <div id="jewel-scan-history"><div style="font-size:11px;color:var(--text3);padding:8px 0">No scans yet</div></div>
+  </div>
+</div>
+
+</div><!-- end jewel-profile -->
+
+
+<!-- FORGE SCAN -->
+<div id="tab-scan" class="section">
+  <div class="card">
+    <div class="card-title">API Key (one-time setup)</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Get your free key at console.anthropic.com — see Settings tab for full instructions</div>
+    <div class="api-key-row">
+      <input type="password" class="api-key-input" id="api-key-input" placeholder="sk-ant-api03-...">
+      <button class="btn-primary" style="font-size:11px;padding:8px 12px" onclick="saveApiKey()">Save</button>
+    </div>
+    <div id="api-key-status" style="font-size:11px;color:var(--text3)"></div>
+  </div>
+
+  <div class="scan-card">
+    <div class="scan-title">⌚ Scan Apple Watch Workout</div>
+    <div class="scan-upload-area" id="forge-watch-drop">
+      <input type="file" accept="image/*" id="forge-watch-file" onchange="handleScan('forge-watch',this)">
+      <div class="scan-icon">⌚</div>
+      <div class="scan-label">Tap to upload Watch screenshot</div>
+      <div class="scan-sub">Takes a photo or choose from library</div>
+    </div>
+    <img id="forge-watch-preview" class="scan-preview">
+    <div class="scan-loading" id="forge-watch-loading"><div class="spin"></div><div>Reading your workout data...</div></div>
+    <div class="scan-result" id="forge-watch-result">
+      <div class="scan-result-title">✓ Workout detected</div>
+      <div id="forge-watch-fields"></div>
+      <button class="btn-primary" style="width:100%;margin-top:10px" onclick="logScannedWorkout('forge')">Log this workout</button>
+    </div>
+  </div>
+
+  <div class="scan-card">
+    <div class="scan-title">🏋️ Scan Strength Screenshot</div>
+    <div class="scan-upload-area">
+      <input type="file" accept="image/*" id="forge-str-file" onchange="handleScan('forge-str',this)">
+      <div class="scan-icon">🏋️</div>
+      <div class="scan-label">Upload strength session screenshot</div>
+      <div class="scan-sub">From any fitness app or photo</div>
+    </div>
+    <img id="forge-str-preview" class="scan-preview">
+    <div class="scan-loading" id="forge-str-loading"><div class="spin"></div><div>Extracting exercise data...</div></div>
+    <div class="scan-result" id="forge-str-result">
+      <div class="scan-result-title">✓ Exercises detected</div>
+      <div id="forge-str-fields"></div>
+      <button class="btn-primary" style="width:100%;margin-top:10px" onclick="logScannedStr('forge')">Log exercises</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Recent scans</div>
+    <div id="forge-scan-history"><div style="font-size:11px;color:var(--text3);padding:8px 0">No scans yet</div></div>
+  </div>
+</div>
+
 </body>
 </html>
