@@ -303,6 +303,26 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 @keyframes spin{to{transform:rotate(360deg)}}
 .api-key-row{display:flex;gap:6px;margin-bottom:10px}
 .api-key-input{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:11px;font-family:inherit;padding:8px 10px}
+
+/* ── TRENDS TAB ── */
+.trend-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.trend-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.trend-chart{height:80px;position:relative;margin-bottom:8px}
+.trend-bars{display:flex;align-items:flex-end;gap:4px;height:100%}
+.trend-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%}
+.trend-bar{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height 0.4s ease}
+.trend-bar-label{font-size:8px;color:var(--text3);text-align:center;white-space:nowrap}
+.trend-bar-val{font-size:8px;font-weight:600;text-align:center;white-space:nowrap}
+.trend-stat-row{display:flex;gap:8px;margin-top:8px}
+.trend-stat{flex:1;background:var(--surface2);border-radius:8px;padding:8px;text-align:center}
+.trend-stat-val{font-size:16px;font-weight:700;margin-bottom:1px}
+.trend-stat-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px}
+.trend-delta{font-size:10px;padding:2px 6px;border-radius:5px;margin-top:2px;display:inline-block}
+.trend-up{background:var(--green-dim);color:var(--green)}
+.trend-down{background:var(--red-dim);color:var(--red)}
+.trend-neutral{background:var(--amber-dim);color:var(--amber)}
+.trend-empty{text-align:center;padding:20px;font-size:12px;color:var(--text3)}
+.sparkline{width:100%;height:40px}
 </style>
 </head>
 <body>
@@ -355,6 +375,7 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
   <button class="tab-btn" onclick="showTab('prog')">Progress</button>
   <button class="tab-btn" onclick="showTab('rehab')">Knee rehab</button>
   <button class="tab-btn" onclick="showTab('sauna')">Sauna</button>
+  <button class="tab-btn" onclick="showTab('trends')">📈 Trends</button>
   <button class="tab-btn" onclick="showTab('scan')">📷 Scan</button>
   <button class="tab-btn" onclick="showTab('cfg')">Settings</button>
 </div>
@@ -2519,6 +2540,453 @@ function renderScanHistory(profile){
 // Init API key status on load
 setTimeout(updateApiKeyStatus, 500);
 
+
+/* ══════════════════════════════════════
+   AUTO-MATCH + TRENDS ENGINE
+   ══════════════════════════════════════ */
+
+// Program start date - April 8 2026 (Jacob Week 1 Day 1)
+const FORGE_START = new Date('2026-04-08');
+const JEWEL_START = new Date('2026-04-08'); // adjust if different
+
+// Watch workout type → category mapping
+const WATCH_TYPE_MAP = {
+  'traditional strength training': 'strength',
+  'strength training': 'strength',
+  'functional strength training': 'strength',
+  'high intensity interval training': 'hiit',
+  'hiit': 'hiit',
+  'outdoor run': 'run',
+  'indoor run': 'run',
+  'running': 'run',
+  'outdoor walk': 'walk',
+  'indoor walk': 'walk',
+  'rowing': 'row',
+  'cycling': 'bike',
+  'indoor cycling': 'bike',
+  'cross training': 'crossfit',
+  'other': 'other',
+};
+
+function classifyWatchType(typeStr){
+  if(!typeStr) return 'other';
+  const lower = typeStr.toLowerCase().trim();
+  for(const[key,val] of Object.entries(WATCH_TYPE_MAP)){
+    if(lower.includes(key)) return val;
+  }
+  return 'other';
+}
+
+// Parse date string from scan (e.g. "Apr 22", "Tue, Apr 22", "4/22/2026")
+function parseScanDate(dateStr){
+  if(!dateStr) return new Date();
+  try {
+    // Try direct parse first
+    const d = new Date(dateStr + ' 2026');
+    if(!isNaN(d)) return d;
+    // Try MM/DD/YYYY
+    const d2 = new Date(dateStr);
+    if(!isNaN(d2)) return d2;
+  } catch(e){}
+  return new Date();
+}
+
+// Get week number from date for a profile
+function getWeekFromDate(date, startDate){
+  const diff = Math.floor((date - startDate) / (7 * 24 * 60 * 60 * 1000));
+  return Math.max(1, diff + 1);
+}
+
+// Get day of week name
+function getDayName(date){
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  return days[date.getDay()];
+}
+
+// Auto-match scan to workout slot
+function autoMatchWorkout(profile, scanData, scanType){
+  const date = parseScanDate(scanData.date);
+  const startDate = profile === 'forge' ? FORGE_START : JEWEL_START;
+  const week = getWeekFromDate(date, startDate);
+  const dayName = getDayName(date);
+  const category = classifyWatchType(scanData.type || scanType);
+
+  const match = {
+    week, dayName, category, date: date.toLocaleDateString('en-US',{month:'short',day:'numeric'}),
+    matched: false, slot: null
+  };
+
+  if(profile === 'forge'){
+    // Map category to slot
+    if(category === 'strength') match.slot = dayName;
+    else if(category === 'hiit') match.slot = dayName + '_metcon';
+    else if(category === 'run') match.slot = dayName + '_run';
+    match.matched = true;
+  } else {
+    // Jewel matching
+    if(category === 'strength') match.slot = dayName;
+    else if(category === 'crossfit' || category === 'hiit') match.slot = dayName + '_cf';
+    else if(category === 'run') match.slot = dayName + '_run';
+    match.matched = true;
+  }
+  return match;
+}
+
+// Enhanced logScannedWorkout with auto-matching
+function logScannedWorkout(profile){
+  const scanId = profile + '-watch';
+  const data = scannedData[scanId];
+  if(!data) return;
+
+  const match = autoMatchWorkout(profile, data, 'strength');
+  const stateObj = profile === 'forge' ? ST : JST;
+  const saveFunc = profile === 'forge' ? save : jsave;
+
+  // Build workout entry
+  const entry = {
+    date: match.date,
+    week: match.week,
+    day: match.dayName,
+    slot: match.slot,
+    type: classifyWatchType(data.type),
+    watchType: data.type || '',
+    label: data.type || 'Workout',
+    start: data.start_time||'',
+    end: data.end_time||'',
+    duration: data.duration||'',
+    activeCal: parseInt(data.active_calories)||0,
+    totalCal: parseInt(data.total_calories)||0,
+    avgHR: parseInt(data.avg_hr)||0,
+    maxHR: parseInt(data.max_hr)||0,
+    minHR: parseInt(data.min_hr)||0,
+  };
+
+  // Save to watchHistory
+  if(!stateObj.watchHistory) stateObj.watchHistory = [];
+  // Remove duplicate for same date+type if exists
+  stateObj.watchHistory = stateObj.watchHistory.filter(w=>!(w.date===entry.date && w.type===entry.type));
+  stateObj.watchHistory.unshift(entry);
+  if(stateObj.watchHistory.length > 50) stateObj.watchHistory.pop();
+
+  // Also stamp to the specific week/day slot
+  const slotKey = 'watch__'+match.week+'__'+match.dayName+'__'+entry.type;
+  stateObj.wd[slotKey] = entry;
+
+  saveFunc();
+  saveScanHistory(profile, scanId, data);
+
+  // Refresh trends
+  if(profile === 'forge') renderForgeTrends();
+  else renderJewelTrends();
+
+  document.getElementById(scanId+'-result').style.display='none';
+  document.getElementById(scanId+'-preview').style.display='none';
+
+  const msg = '✓ Logged to Week '+match.week+' · '+match.dayName+(match.slot?' ('+entry.type+')':'');
+  alert(msg);
+}
+
+// Override run logging to use auto-match
+function logScannedRun(){
+  const data = scannedData['jewel-run'];
+  if(!data) return;
+  const match = autoMatchWorkout('jewel', data, 'run');
+  const entry = {
+    date: match.date, week: match.week, day: match.dayName,
+    type: 'run', distance: data.distance||'', duration: data.duration||'',
+    pace: data.avg_pace||'', hr: parseInt(data.avg_hr)||0, calories: parseInt(data.calories)||0,
+  };
+  if(!JST.runHistory) JST.runHistory=[];
+  JST.runHistory = JST.runHistory.filter(r=>!(r.date===entry.date));
+  JST.runHistory.unshift(entry);
+  JST.wd['watch__'+match.week+'__'+match.dayName+'__run'] = entry;
+  jsave();
+  renderJewelTrends();
+  document.getElementById('jewel-run-result').style.display='none';
+  document.getElementById('jewel-run-preview').style.display='none';
+  alert('✓ Run logged to Week '+match.week+' · '+match.dayName);
+}
+
+// Override CF logging to use auto-match
+function logScannedCF(){
+  const data = scannedData['jewel-cf'];
+  if(!data) return;
+  if(!JST.cfHistory) JST.cfHistory=[];
+  const movements = data.movements ? data.movements.map(m=>m.name+(m.reps?' '+m.reps:'')+(m.weight?' @ '+m.weight:'')).join(' · ') : '';
+  const entry = {
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),
+    wod: (data.wod_name||'WOD') + (data.format?' — '+data.format:'') + (movements?' | '+movements:''),
+    score: data.score||'',
+    movements: data.movements||[],
+    week: getWeekFromDate(new Date(), JEWEL_START),
+  };
+  JST.cfHistory.unshift(entry);
+  // Parse numeric score for trending (rounds or time in seconds)
+  const numScore = parseFloat(entry.score);
+  if(!isNaN(numScore)){
+    const wk = entry.week;
+    if(!JST.wd['cf__wk'+wk]) JST.wd['cf__wk'+wk] = [];
+    JST.wd['cf__wk'+wk].push({wod: data.wod_name||'WOD', score: entry.score, numScore});
+  }
+  jsave();
+  renderJCF();
+  renderJewelTrends();
+  document.getElementById('jewel-cf-result').style.display='none';
+  document.getElementById('jewel-cf-preview').style.display='none';
+  alert('✓ CrossFit WOD logged!');
+}
+
+/* ── FORGE TRENDS RENDERER ── */
+function renderForgeTrends(){
+  const el = document.getElementById('forge-trends-content');
+  if(!el) return;
+  const history = (ST.watchHistory||[]).filter(w=>w.activeCal>0);
+  if(history.length < 2){
+    el.innerHTML='<div class="trend-empty">📷 Scan at least 2 workouts to see trends<br><br>Go to 📷 Scan tab and upload your Apple Watch screenshots</div>';
+    return;
+  }
+
+  const strSessions = history.filter(w=>w.type==='strength').slice(0,8).reverse();
+  const hiitSessions = history.filter(w=>w.type==='hiit').slice(0,8).reverse();
+  const allSessions = history.slice(0,10).reverse();
+
+  let html = '';
+
+  // Total calories trend
+  if(allSessions.length >= 2){
+    html += buildBarChart('Active Calories — All Sessions', allSessions, 'activeCal', '#3b82f6', 'cal', true);
+  }
+
+  // Strength trend
+  if(strSessions.length >= 2){
+    html += buildBarChart('Strength — Active Calories', strSessions, 'activeCal', '#22c55e', 'cal', true);
+    html += buildLineStats('Strength Performance', strSessions);
+  }
+
+  // Metcon/HIIT trend
+  if(hiitSessions.length >= 2){
+    html += buildBarChart('Metcon — Calories Burned', hiitSessions, 'activeCal', '#ef4444', 'cal', true);
+    html += buildHRTrend('Metcon Avg HR Trend', hiitSessions);
+  }
+
+  // HR efficiency (HR going down = fitter)
+  if(allSessions.length >= 3){
+    html += buildHRTrend('Avg HR Trend (lower = fitter)', allSessions, true);
+  }
+
+  // Weekly summary
+  html += buildWeeklySummary('forge');
+
+  el.innerHTML = html;
+}
+
+/* ── JEWEL TRENDS RENDERER ── */
+function renderJewelTrends(){
+  const el = document.getElementById('jewel-trends-content');
+  if(!el) return;
+  const watchHistory = (JST.watchHistory||[]).filter(w=>w.activeCal>0);
+  const runHistory = (JST.runHistory||[]).filter(r=>r.pace);
+  const cfHistory = (JST.cfHistory||[]);
+
+  if(watchHistory.length < 1 && runHistory.length < 1){
+    el.innerHTML='<div class="trend-empty">📷 Scan at least 2 workouts to see trends<br><br>Go to 📷 Scan tab and upload Apple Watch and CrossFit screenshots</div>';
+    return;
+  }
+
+  let html = '';
+
+  // Run pace trend (most important for Jewel)
+  if(runHistory.length >= 2){
+    html += buildRunPaceTrend(runHistory.slice(0,8).reverse());
+    html += buildRunDistanceTrend(runHistory.slice(0,8).reverse());
+  }
+
+  // Strength calories
+  const strSessions = watchHistory.filter(w=>w.type==='strength').slice(0,8).reverse();
+  if(strSessions.length >= 2){
+    html += buildBarChart('Strength — Calories', strSessions, 'activeCal', '#ec4899', 'cal', true);
+  }
+
+  // CrossFit trends
+  if(cfHistory.length >= 2){
+    html += buildCFTrend(cfHistory.slice(0,8));
+  }
+
+  // Overall HR efficiency
+  if(watchHistory.length >= 3){
+    html += buildHRTrend('Avg HR Trend (lower = fitter)', watchHistory.slice(0,8).reverse(), true);
+  }
+
+  // Weekly volume
+  html += buildWeeklySummary('jewel');
+
+  el.innerHTML = html;
+}
+
+/* ── CHART BUILDERS ── */
+function buildBarChart(title, sessions, field, color, unit, showDelta){
+  const vals = sessions.map(s=>s[field]||0);
+  const maxVal = Math.max(...vals, 1);
+  const latest = vals[vals.length-1];
+  const prev = vals[vals.length-2];
+  const delta = prev ? ((latest-prev)/prev*100).toFixed(0) : 0;
+  const deltaClass = delta > 0 ? 'trend-up' : delta < 0 ? 'trend-down' : 'trend-neutral';
+  const deltaLabel = delta > 0 ? '▲ '+delta+'%' : delta < 0 ? '▼ '+Math.abs(delta)+'%' : '→ same';
+
+  let bars = sessions.map((s,i)=>{
+    const val = s[field]||0;const pct = Math.round((val/maxVal)*100);
+    const isLast = i === sessions.length-1;
+    return '<div class="trend-bar-wrap">'
+      +'<div class="trend-bar-val" style="color:'+(isLast?color:'var(--text3)')+'">'+val+'</div>'
+      +'<div class="trend-bar" style="height:'+pct+'%;background:'+(isLast?color:'rgba(255,255,255,0.15)')+'"></div>'
+      +'<div class="trend-bar-label">'+(s.date||('Wk'+(s.week||i+1)))+'</div>'
+      +'</div>';
+  }).join('');
+
+  return '<div class="trend-card"><div class="trend-title"><span>'+title+'</span>'
+    +(showDelta?'<span class="trend-delta '+deltaClass+'">'+deltaLabel+'</span>':'')+'</div>'
+    +'<div class="trend-chart"><div class="trend-bars">'+bars+'</div></div>'
+    +'<div class="trend-stat-row">'
+    +'<div class="trend-stat"><div class="trend-stat-val" style="color:'+color+'">'+latest+'</div><div class="trend-stat-label">Latest '+unit+'</div></div>'
+    +'<div class="trend-stat"><div class="trend-stat-val">'+Math.round(vals.reduce((a,b)=>a+b,0)/vals.length)+'</div><div class="trend-stat-label">Average</div></div>'
+    +'<div class="trend-stat"><div class="trend-stat-val" style="color:var(--green)">'+Math.max(...vals)+'</div><div class="trend-stat-label">Best</div></div>'
+    +'</div></div>';
+}
+
+function buildLineStats(title, sessions){
+  const latest = sessions[sessions.length-1];
+  const first = sessions[0];
+  const calDelta = latest.activeCal - first.activeCal;
+  const hrDelta = latest.avgHR - first.avgHR;
+  return '<div class="trend-card"><div class="trend-title">'+title+' — Progress</div>'
+    +'<div class="trend-stat-row">'
+    +'<div class="trend-stat"><div class="trend-stat-val" style="color:'+(calDelta>=0?'var(--green)':'var(--red)')+')'+'>">'+(calDelta>=0?'+':'')+calDelta+'</div><div class="trend-stat-label">Cal change</div></div>'
+    +'<div class="trend-stat"><div class="trend-stat-val" style="color:'+(hrDelta<=0?'var(--green)':'var(--amber)')+')">'+(hrDelta>0?'+':'')+hrDelta+'</div><div class="trend-stat-label">HR change</div><div style="font-size:9px;color:var(--text3)">'+(hrDelta<=0?'↓ More efficient':'↑ Working harder')+'</div></div>'
+    +'<div class="trend-stat"><div class="trend-stat-val">'+sessions.length+'</div><div class="trend-stat-label">Sessions</div></div>'
+    +'</div></div>';
+}
+
+function buildHRTrend(title, sessions, invertGood){
+  const vals = sessions.map(s=>s.avgHR||0).filter(v=>v>0);
+  if(vals.length < 2) return '';
+  const latest = vals[vals.length-1];const prev = vals[vals.length-2];
+  const delta = latest - prev;
+  const good = invertGood ? delta <= 0 : delta >= 0;
+  const deltaClass = good ? 'trend-up' : 'trend-down';
+  const deltaLabel = (delta>0?'▲ ':delta<0?'▼ ':'→ ')+Math.abs(delta)+' bpm';
+  const maxVal = Math.max(...vals);
+  let bars = sessions.map((s,i)=>{
+    const val = s.avgHR||0;if(!val) return '';
+    const pct = Math.round((val/maxVal)*100);
+    const isLast = i === sessions.length-1;
+    const barColor = isLast ? (good?'var(--green)':'var(--red)') : 'rgba(255,255,255,0.15)';
+    return '<div class="trend-bar-wrap">'
+      +'<div class="trend-bar-val" style="color:'+(isLast?(good?'var(--green)':'var(--red)'):'var(--text3)')+'">'+val+'</div>'
+      +'<div class="trend-bar" style="height:'+pct+'%;background:'+barColor+'"></div>'
+      +'<div class="trend-bar-label">'+(s.date||'Wk'+(s.week||i+1))+'</div>'
+      +'</div>';
+  }).join('');
+  return '<div class="trend-card"><div class="trend-title"><span>'+title+'</span><span class="trend-delta '+deltaClass+'">'+deltaLabel+'</span></div>'
+    +'<div class="trend-chart"><div class="trend-bars">'+bars+'</div></div></div>';
+}
+
+function buildRunPaceTrend(runs){
+  if(runs.length < 2) return '';
+  // Convert pace string "10:38" to seconds for comparison
+  const paceToSecs = p=>{if(!p)return 0;const pt=p.replace('/mi','').replace('/km','').trim().split(':');return parseInt(pt[0])*60+(parseInt(pt[1])||0);};
+  const vals = runs.map(r=>paceToSecs(r.pace));
+  const maxVal = Math.max(...vals,1);
+  const latest = vals[vals.length-1];const prev = vals[vals.length-2];
+  const delta = prev-latest; // positive = faster (good)
+  const deltaClass = delta >= 0 ? 'trend-up' : 'trend-down';
+  const deltaSecs = Math.abs(delta);
+  const deltaLabel = (delta>=0?'▲ ':' ▼ ')+Math.floor(deltaSecs/60)+':'+(deltaSecs%60).toString().padStart(2,'0')+'/mi';
+  const secsToStr = s=>{if(!s)return '—';return Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0');};
+  let bars = runs.map((r,i)=>{
+    const val = paceToSecs(r.pace);const pct = Math.round((1-(val/maxVal))*70+20);
+    const isLast = i === runs.length-1;
+    return '<div class="trend-bar-wrap">'
+      +'<div class="trend-bar-val" style="font-size:8px;color:'+(isLast?'#ec4899':'var(--text3)')+'">'+r.pace+'</div>'
+      +'<div class="trend-bar" style="height:'+pct+'%;background:'+(isLast?'#ec4899':'rgba(236,72,153,0.2)')+'"></div>'
+      +'<div class="trend-bar-label">'+(r.date||'Wk'+(r.week||i+1))+'</div>'
+      +'</div>';
+  }).join('');
+  const goal = 9*60+36; // sub-60 10K = 9:36/mi
+  const currentBest = Math.min(...vals.filter(v=>v>0));
+  const gapSecs = currentBest - goal;
+  const gapStr = gapSecs > 0 ? secsToStr(gapSecs)+' off goal pace' : '🎯 At goal pace!';
+  return '<div class="trend-card"><div class="trend-title"><span>🏃 Run Pace Trend</span><span class="trend-delta '+deltaClass+'">'+deltaLabel+'</span></div>'
+    +'<div class="trend-chart"><div class="trend-bars">'+bars+'</div></div>'
+    +'<div class="trend-stat-row">'
+    +'<div class="trend-stat"><div class="trend-stat-val" style="color:#ec4899">'+runs[runs.length-1].pace+'</div><div class="trend-stat-label">Latest pace</div></div>'
+    +'<div class="trend-stat"><div class="trend-stat-val" style="color:var(--green)">'+secsToStr(currentBest)+'</div><div class="trend-stat-label">Best pace</div></div>'
+    +'<div class="trend-stat"><div class="trend-stat-val" style="font-size:11px;color:var(--amber)">9:36</div><div class="trend-stat-label">Goal pace</div></div>'
+    +'</div>'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center">'+gapStr+'</div>'
+    +'</div>';
+}
+
+function buildRunDistanceTrend(runs){
+  if(runs.length < 2) return '';
+  const distToNum = d=>{if(!d)return 0;const m=d.match(/([0-9.]+)/);return m?parseFloat(m[1]):0;};
+  const vals = runs.map(r=>distToNum(r.distance));
+  const total = vals.reduce((a,b)=>a+b,0).toFixed(1);
+  return buildBarChart('Weekly Distance (miles)', runs.map((r,i)=>({...r,distNum:distToNum(r.distance)})).map(r=>({...r,activeCal:Math.round(r.distNum*10)/10})), 'activeCal', '#ec4899', 'mi', true).replace('Active Calories — ','').replace('Calories','Distance');
+}
+
+function buildCFTrend(cfHistory){
+  if(cfHistory.length < 2) return '';
+  return '<div class="trend-card"><div class="trend-title">CrossFit WOD History</div>'
+    +cfHistory.slice(0,6).map(w=>'<div style="padding:8px 0;border-bottom:1px solid var(--border)">'
+      +'<div style="display:flex;justify-content:space-between;margin-bottom:2px">'
+      +'<span style="font-size:11px;color:#f472b6;font-weight:600">'+w.date+'</span>'
+      +'<span style="font-size:11px;color:var(--green);font-weight:600">'+w.score+'</span></div>'
+      +'<div style="font-size:11px;color:var(--text2)">'+w.wod.substring(0,60)+(w.wod.length>60?'...':'')+'</div>'
+      +'</div>').join('')
+    +'</div>';
+}
+
+function buildWeeklySummary(profile){
+  const stateObj = profile === 'forge' ? ST : JST;
+  const history = stateObj.watchHistory||[];
+  if(history.length < 2) return '';
+  // Group by week
+  const byWeek = {};
+  history.forEach(w=>{
+    const wk = 'Wk'+(w.week||'?');
+    if(!byWeek[wk]) byWeek[wk]={sessions:0,totalCal:0,avgHR:[]};
+    byWeek[wk].sessions++;
+    byWeek[wk].totalCal += w.activeCal||0;
+    if(w.avgHR) byWeek[wk].avgHR.push(w.avgHR);
+  });
+  const weeks = Object.entries(byWeek).slice(-6);
+  if(weeks.length < 2) return '';
+  const color = profile === 'forge' ? 'var(--blue)' : '#ec4899';
+  let rows = weeks.map(([wk,data])=>{
+    const avgHR = data.avgHR.length ? Math.round(data.avgHR.reduce((a,b)=>a+b,0)/data.avgHR.length) : '—';
+    return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px">'
+      +'<span style="font-weight:600;color:'+color+'">'+wk+'</span>'
+      +'<span>'+data.sessions+' sessions</span>'
+      +'<span style="color:var(--green)">'+data.totalCal+' cal</span>'
+      +'<span style="color:var(--text3)">'+avgHR+' avg HR</span>'
+      +'</div>';
+  }).join('');
+  return '<div class="trend-card"><div class="trend-title">Weekly Summary</div>'+rows+'</div>';
+}
+
+// Render trends on tab switch
+const _origShowTab = showTab;
+window.showTab = function(t){
+  _origShowTab(t);
+  if(t==='trends') renderForgeTrends();
+};
+
+const _origShowJTab = showJTab;
+window.showJTab = function(t){
+  _origShowJTab(t);
+  if(t==='jtrends') renderJewelTrends();
+};
+
 </script>
 
 <!-- JEWEL PROFILE (hidden by default) -->
@@ -2528,6 +2996,7 @@ setTimeout(updateApiKeyStatus, 500);
   <button class="tab-btn" onclick="showJTab('jstr')">Strength</button>
   <button class="tab-btn" onclick="showJTab('jrun')">Running</button>
   <button class="tab-btn" onclick="showJTab('jcf')">CrossFit</button>
+  <button class="tab-btn" onclick="showJTab('jtrends')">📈 Trends</button>
   <button class="tab-btn" onclick="showJTab('jscan')">📷 Scan</button>
   <button class="tab-btn" onclick="showJTab('jgroc')">Grocery</button>
 </div>
@@ -2618,6 +3087,12 @@ setTimeout(updateApiKeyStatus, 500);
 </div>
 
 
+
+<!-- JEWEL TRENDS -->
+<div id="tab-jtrends" class="section">
+  <div id="jewel-trends-content"><div class="trend-empty">📷 Scan at least 3 workouts to see trends</div></div>
+</div>
+
 <!-- JEWEL SCAN -->
 <div id="tab-jscan" class="section">
   <div class="card">
@@ -2685,6 +3160,12 @@ setTimeout(updateApiKeyStatus, 500);
 
 </div><!-- end jewel-profile -->
 
+
+
+<!-- FORGE TRENDS -->
+<div id="tab-trends" class="section">
+  <div id="forge-trends-content"><div class="trend-empty">📷 Scan at least 3 workouts to see trends</div></div>
+</div>
 
 <!-- FORGE SCAN -->
 <div id="tab-scan" class="section">
