@@ -702,7 +702,7 @@ const PH=[
       {n:"Knee rehab circuit",eq:"Light band+mat",sets:1,reps:"See rehab tab",m:null},
     ]},
   ]},
-  {label:"Intensify",color:"#f59e0b",weeks:[3,4],days:[
+  {label:"Intensify",color:"#f59e0b",weeks:[3,4,5],days:[
     {day:"Wednesday",type:"Push",name:"Push 1 - Intensify + Cable",color:"#3b82f6",cardio:"Row or bike - 15 min increased intensity",metcon:{type:"For time",desc:"3 rounds: 12 KB swings, 10 push-ups, 200m row",wk1best:""},exercises:[
       {n:"Barbell bench press",eq:"Barbell+bench",sets:4,reps:"8-10",m:"compound"},
       {n:"Incline DB press",eq:"Adj DBs+bench",sets:4,reps:"10",m:"compound"},
@@ -759,7 +759,51 @@ const PH=[
       {n:"Knee rehab circuit",eq:"Light band+mat",sets:1,reps:"See rehab tab",m:null},
     ]},
   ]},
-  {label:"Peak Volume",color:"#ef4444",weeks:[5,6],days:[
+  {label:"Deload",color:"#22c55e",weeks:[6],days:[
+    {day:"Wednesday",type:"Push",name:"Push 1 — Deload Week",color:"#22c55e",cardio:"Easy bike or row 10 min — no intensity",metcon:{type:"None",desc:"No metcon this week — active recovery only",wk1best:""},exercises:[
+      {n:"Barbell bench press",eq:"Barbell+bench",sets:3,reps:"10",m:"compound",note:"50-60% of working weight — focus on perfect form and mind-muscle connection"},
+      {n:"Incline DB press",eq:"Adj DBs+bench",sets:3,reps:"10",m:"compound",note:"Light weight — slow and controlled"},
+      {n:"DB shoulder press",eq:"Adj DBs",sets:3,reps:"10",m:"shoulder",note:"Light — full range of motion"},
+      {n:"DB lateral raise",eq:"Adj DBs",sets:3,reps:"15",m:"shoulder",note:"Very light — feel the delt the whole rep"},
+      {n:"Cable tricep pushdown",eq:"Pulley+rope",sets:3,reps:"15",m:"tricep",note:"Light pump work only"},
+      {n:"EZ bar bicep curl",eq:"EZ curl bar",sets:3,reps:"15",m:"bicep",note:"Light — squeeze at top"},
+    ]},
+    {day:"Thursday",type:"Pull",name:"Pull 1 — Deload Week",color:"#22c55e",cardio:"Easy row 10 min — conversational pace",metcon:{type:"None",desc:"No metcon this week",wk1best:""},exercises:[
+      {n:"Barbell bent-over row",eq:"Barbell",sets:3,reps:"10",m:"compound",note:"60% of working weight — perfect form focus"},
+      {n:"DB single-arm row",eq:"Adj DBs+bench",sets:3,reps:"10/side",m:"compound",note:"Light — full stretch at bottom"},
+      {n:"Ring row",eq:"Gymnastic rings",sets:3,reps:"10",m:"compound",note:"Bodyweight — slow and controlled"},
+      {n:"DB rear delt fly",eq:"Adj DBs",sets:3,reps:"15",m:"shoulder",note:"Very light — feel the rear delt"},
+      {n:"EZ bar bicep curl",eq:"EZ curl bar",sets:3,reps:"15",m:"bicep",note:"Light pump"},
+    ]},
+    {day:"Friday",type:"Legs",name:"Legs 1 — Deload Week",color:"#22c55e",cardio:"Easy walk 15 min — protect the knees",metcon:{type:"None",desc:"No metcon this week — let the knees recover",wk1best:""},exercises:[
+      {n:"Barbell box squat",eq:"Barbell+plyo box",sets:3,reps:"10",m:"compound",note:"60% of working weight — sit and pause — feel the pattern"},
+      {n:"Barbell Romanian deadlift",eq:"Barbell",sets:3,reps:"10",m:"compound",note:"Light — full stretch — hamstring focus"},
+      {n:"Glute bridge floor",eq:"Bodyweight or light bar",sets:3,reps:"15",m:"compound",note:"Bodyweight or very light — 2 sec hold at top"},
+      {n:"Standing calf raise",eq:"Barbell or BW",sets:3,reps:"20",m:null,note:"Light — full range"},
+      {n:"Knee rehab circuit",eq:"Light band + mat",sets:1,reps:"Full circuit",m:null,note:"Full rehab circuit — non negotiable during deload"},
+    ]},
+    {day:"Saturday",type:"Push",name:"Push 2 — Deload Week",color:"#22c55e",cardio:"Easy bike 10 min",metcon:{type:"None",desc:"No metcon this week",wk1best:""},exercises:[
+      {n:"Barbell bench press",eq:"Barbell+bench",sets:3,reps:"10",m:"compound",note:"Same as Wednesday — light and controlled"},
+      {n:"DB Arnold press",eq:"Adj DBs",sets:3,reps:"12",m:"shoulder",note:"Light — full rotation"},
+      {n:"Cable lateral raise",eq:"Pulley+handle",sets:3,reps:"15/side",m:"shoulder",note:"Very light — constant tension"},
+      {n:"Cable tricep pushdown",eq:"Pulley+rope",sets:3,reps:"15",m:"tricep",note:"Pump work only"},
+      {n:"DB hammer curl",eq:"Adj DBs",sets:3,reps:"15",m:"bicep",note:"Light — squeeze at top"},
+    ]},
+    {day:"Monday",type:"Pull",name:"Pull 2 — Deload Week",color:"#22c55e",cardio:"Easy walk or light row",metcon:{type:"None",desc:"No metcon",wk1best:""},exercises:[
+      {n:"Barbell bent-over row",eq:"Barbell",sets:3,reps:"10",m:"compound",note:"Light — perfect form"},
+      {n:"Straight arm lat pulldown",eq:"Pulley+bar",sets:3,reps:"15",m:"compound",note:"Very light — feel the lat"},
+      {n:"Cable face pull",eq:"Pulley+rope",sets:3,reps:"15",m:"shoulder",note:"Light — rotator cuff health"},
+      {n:"Cable bicep curl",eq:"Pulley+bar",sets:3,reps:"15",m:"bicep",note:"Light pump"},
+    ]},
+    {day:"Tuesday",type:"Legs",name:"Legs 2 — Deload Week",color:"#22c55e",cardio:"Easy walk 15 min",metcon:{type:"None",desc:"No metcon",wk1best:""},exercises:[
+      {n:"DB front rack squat",eq:"Adj DBs",sets:3,reps:"12",m:"compound",note:"Light — feel the pattern — knee tracks over toe"},
+      {n:"Barbell Romanian deadlift",eq:"Barbell",sets:3,reps:"12",m:"compound",note:"Light — full stretch"},
+      {n:"Glute bridge floor",eq:"Light bar",sets:3,reps:"15",m:"compound",note:"Light — 2 sec hold"},
+      {n:"Single-leg calf raise",eq:"Bodyweight",sets:3,reps:"15/leg",m:null,note:"Bodyweight — balance and ROM focus"},
+      {n:"Knee rehab circuit",eq:"Light band + mat",sets:1,reps:"Full circuit",m:null,note:"Full circuit — critical during deload week"},
+    ]},
+  ]},
+  {label:"Peak Volume",color:"#ef4444",weeks:[7],days:[
     {day:"Wednesday",type:"Push",name:"Push 1 - Peak Volume + Cable",color:"#3b82f6",cardio:"Row 15 min or 20 min easy run",metcon:{type:"For time",desc:"4 rounds: 12 KB swings, 10 push-ups, 200m row",wk1best:""},exercises:[
       {n:"Barbell bench press",eq:"Barbell+bench",sets:5,reps:"6-8",m:"compound"},
       {n:"Incline DB press",eq:"Adj DBs+bench",sets:4,reps:"8-10",m:"compound"},
@@ -817,7 +861,7 @@ const PH=[
       {n:"Knee rehab circuit",eq:"Light band+mat",sets:1,reps:"See rehab tab",m:null},
     ]},
   ]},
-  {label:"Peak and Shred",color:"#a855f7",weeks:[7,8],days:[
+  {label:"Peak and Shred",color:"#a855f7",weeks:[8],days:[
     {day:"Wednesday",type:"Push",name:"Push 1 - Peak and Shred + Cable",color:"#3b82f6",cardio:"Row or run 20 min match or beat last week",metcon:{type:"For time",desc:"5 rounds: 12 KB swings, 10 push-ups, 200m row",wk1best:""},exercises:[
       {n:"Barbell bench press near 1RM",eq:"Barbell+bench",sets:5,reps:"3-5",m:"compound"},
       {n:"Incline DB press heavy",eq:"Adj DBs+bench",sets:4,reps:"8",m:"compound"},
@@ -1232,9 +1276,16 @@ function skipByIdx(i){
 function doSkip(){
   if(!window._pendingSkip)return;
   const key=window._pendingSkip.key;
-  ST.wd[key]=true;save();
-  closeSkipModal();
-  renderStr();
+  if(window._pendingSkipIsJewel){
+    JST.wd[key]=true;jsave();
+    closeSkipModal();
+    window._pendingSkipIsJewel=false;
+    renderJDayView();
+  } else {
+    ST.wd[key]=true;save();
+    closeSkipModal();
+    renderStr();
+  }
 }
 
 function closeSkipModal(){
@@ -1675,10 +1726,10 @@ loadApiKey();
 
 /* ── REST TIMER ENGINE ── */
 const REST_TIMES = {
-  compound: 90,   // bench, deadlift, row, squat, hip thrust
-  isolation: 60,  // curls, lateral raise, kickback, fly
-  between: 120,   // between exercises (last set → first set of next)
-  default: 90
+  compound: 60,   // all sets — 1:00
+  isolation: 60,  // curls, lateral raise, kickback, fly — 1:00
+  between: 120,   // between exercises — 2:00
+  default: 60
 };
 
 const COMPOUND_EX = ['bench press','deadlift','row','squat','hip thrust','lunge','step-up','pull-up','clean','press','RDL','snatch'];
@@ -2081,7 +2132,7 @@ function showJTab(t){
   const el = document.getElementById('tab-'+t);
   if(el) el.classList.add('active');
   if(t==='jdash')renderJDash();
-  if(t==='jstr')renderJStr();
+  if(t==='jstr'){renderJStr();requestWakeLock();}else if(activeProfile==='jewel'){releaseWakeLock();}
   if(t==='jrun')renderJRun();
   if(t==='jcf')renderJCF();
   if(t==='jgroc'){renderGroc();renderJGrocCount();}
@@ -2162,47 +2213,188 @@ function renderJDayView(){
   (function(k){doneBtn.addEventListener('click',function(){JST.wd[k]=!JST.wd[k];this.textContent=JST.wd[k]?'✓ Done':'Mark done';this.className='btn-done'+(JST.wd[k]?' completed':'');jsave();});})(dk);
   whDiv.appendChild(whInfo);whDiv.appendChild(doneBtn);wc.appendChild(whDiv);
   // Exercises
+  // Registry reset for Jewel skip buttons
+  window._jSkipReg={};window._jSkipIdx=0;
   dayData.exercises.forEach(ex=>{
-    const div=document.createElement('div');div.className='ex-row'+(ex.m&&ex.m!=='compound'?' focus-muscle':'');
-    const ns=typeof ex.sets==='number'?ex.sets:1;
+    const extraJKey='extrasets__'+JST.wk+'__'+dayData.day+'__'+ex.n;
+    const extraJSets=JST.wd[extraJKey]||0;
+    const ns=(typeof ex.sets==='number'?ex.sets:1)+extraJSets;
+    // Get previous week history for pre-fill and PR detection
+    const jHistKey=dayData.day+'__'+ex.n;
+    const jHist=JST.wd[jHistKey]||[];
+    const jLastWk=jHist.find(h=>h.week===(JST.wk-1))||jHist[0]||{};
+    const isSkippedJ=JST.wd['skipped__'+JST.wk+'__'+dayData.day+'__'+ex.n];
     const mt=ex.m&&MTAGS[ex.m]?'<span class="mtag '+MTAGS[ex.m]+'">'+MLBLS[ex.m]+'</span>':'';
     const ni=ex.note?'<div class="ex-note">'+ex.note+'</div>':'';
-    let html='<div class="ex-top" style="align-items:center"><div style="flex:1"><div class="ex-name">'+ex.n+'</div><div class="ex-meta">'+ex.sets+'×'+ex.reps+' · '+ex.eq+'</div>'+mt+ni+'</div></div>';
-    html+='<div class="sets-container">';
+    // Skip button
+    const _jsi=window._jSkipIdx++;
+    window._jSkipReg[_jsi]={n:ex.n,day:dayData.day,skipped:isSkippedJ,profile:'jewel'};
+    const jSkipBtn='<button type="button" onclick="jSkipByIdx('+_jsi+')" style="background:transparent;border:1px solid var(--border2);color:'+(isSkippedJ?'#ec4899':'var(--text3)')+';font-size:18px;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:8px;touch-action:manipulation">'+(isSkippedJ?'↩':'×')+'</button>';
+    // Plateau detection for Jewel
+    const jHistArr=JST.wd[dayData.day+'__'+ex.n]||[];
+    const jIsPlat=(()=>{
+      if(jHistArr.length<3)return false;
+      const r=jHistArr.slice(0,3);
+      const mw=Math.max(...r.map(s=>parseFloat(s.bestWeight)||0));
+      const mr=Math.max(...r.map(s=>parseInt(s.bestReps)||0));
+      const fw=parseFloat(r[r.length-1].bestWeight)||0;
+      const fr=parseInt(r[r.length-1].bestReps)||0;
+      return mw<=fw&&mr<=fr;
+    })();
+    const div=document.createElement('div');
+    div.className='ex-row'+(isSkippedJ?' plateau':jIsPlat?' plateau':ex.m&&ex.m!=='compound'?' focus-muscle':'');
+    if(isSkippedJ)div.style.opacity='0.5';
+    const jPlatTag=jIsPlat?'<div class="plateau-tag" style="margin-right:4px"><div class="pdot"></div>PLATEAU</div>':'';
+    let exHtml='<div class="ex-top" style="align-items:center;gap:4px"><div style="flex:1;min-width:0"><div class="ex-name">'+ex.n+(isSkippedJ?'<span style="font-size:9px;color:var(--red);margin-left:6px;background:var(--red-dim);padding:1px 6px;border-radius:4px">Skipped</span>':'')+'</div><div class="ex-meta">'+ns+'×'+ex.reps+' · '+ex.eq+'</div>'+mt+ni+'</div>'+(jIsPlat?jPlatTag:'')+jSkipBtn+'</div>';
+    exHtml+='<div class="sets-container">';
     for(let s=1;s<=ns;s++){
       const sk=JST.wk+'__'+dayData.day+'__'+ex.n+'__s'+s;const sv=JST.wd[sk]||{};
-      const cw=sv.wt!==undefined&&sv.wt!==''?sv.wt:'';const cr=sv.reps!==undefined&&sv.reps!==''?sv.reps:'';
+      // Pre-fill from last week
+      const prevWkSk=(JST.wk-1)+'__'+dayData.day+'__'+ex.n+'__s'+s;
+      const prevSet=JST.wd[prevWkSk]||{};
+      const prevWt=parseFloat(prevSet.wt)||0;const prevReps=parseInt(prevSet.reps)||0;
+      const curWt=sv.wt!==undefined&&sv.wt!==''?parseFloat(sv.wt)||0:prevWt||0;
+      const curReps=sv.reps!==undefined&&sv.reps!==''?parseInt(sv.reps)||0:prevReps||0;
+      const hasLogged=sv.wt!==undefined&&sv.wt!=='';
+      const isPR=hasLogged&&prevWt>0&&(parseFloat(sv.wt)>prevWt||parseInt(sv.reps)>prevReps);
+      const isPreFill=!hasLogged&&prevWt>0;
+      const rowCls='set-row'+(isPR?' pr-set':hasLogged?' done-set':'');
+      const wtDisp=curWt||'—';const repsDisp=curReps||'—';
       const exEnc=encodeURIComponent(ex.n);const dayEnc=encodeURIComponent(dayData.day);const wtInc=getWtIncrement(ex.n);
-      html+='<div class="set-row'+(cw?' done-set':'')+'" id="jsr__'+sk+'">'
+      // Target text
+      const tgtTxt=prevWt>0?'Wk'+(JST.wk-1)+': '+prevWt+'lbs x'+prevReps+' → beat it':'First time — log it';
+      exHtml+='<div class="'+rowCls+'" id="jsr__'+sk+'">'
         +'<div class="set-num">S'+s+'</div>'
         +'<div class="set-field"><div class="set-field-lbl">Weight</div><div class="adj-row">'
         +'<button class="adj-btn" data-sk="'+sk+'" data-f="wt" data-d="-'+wtInc+'" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">−</button>'
-        +'<div class="set-val-display" id="jwv__'+sk+'">'+(cw||'—')+'</div>'
+        +'<div class="set-val-display'+(isPreFill?' prefill':isPR?' pr-val':'')+'" id="jwv__'+sk+'">'+wtDisp+'</div>'
         +'<button class="adj-btn" data-sk="'+sk+'" data-f="wt" data-d="'+wtInc+'" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">+</button>'
         +'</div></div>'
         +'<div class="set-sep">×</div>'
         +'<div class="set-field"><div class="set-field-lbl">Reps</div><div class="adj-row">'
         +'<button class="adj-btn" data-sk="'+sk+'" data-f="reps" data-d="-1" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">−</button>'
-        +'<div class="set-val-display" id="jrv__'+sk+'">'+(cr||'—')+'</div>'
+        +'<div class="set-val-display'+(isPreFill?' prefill':isPR?' pr-val':'')+'" id="jrv__'+sk+'">'+repsDisp+'</div>'
         +'<button class="adj-btn" data-sk="'+sk+'" data-f="reps" data-d="1" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">+</button>'
-        +'</div></div></div>';
+        +'</div></div>'
+        +(isPR?'<div class="pr-badge">PR</div>':'')
+        +'</div>'
+        +'<div class="set-target'+(isPR?' beat':'')+'">'+tgtTxt+'</div>';
     }
-    html+='</div>';
-    div.innerHTML=html;wc.appendChild(div);
+    // Add set button
+    const _jAddIdx=window._jSkipIdx++;
+    window._jSkipReg[_jAddIdx]={addSet:true,n:ex.n,day:dayData.day,profile:'jewel'};
+    exHtml+='</div><button type="button" class="add-set-btn" onclick="jSkipByIdx('+_jAddIdx+')">+ Add set</button>';
+    // Notes - same as FORGE
+    const jNoteKey='note__'+dayData.day+'__'+ex.n;
+    const jSavedNote=JST.wd[jNoteKey]||'';
+    const jNkEnc=encodeURIComponent(jNoteKey);
+    exHtml+='<span class="note-toggle" data-nk="'+jNkEnc+'" data-profile="jewel" onclick="togJNoteBtn(this)">'+(jSavedNote?'Edit note':'+ Add note')+'</span>'
+      +'<div class="note-area'+(jSavedNote?' open':'')+'">'
+      +'<textarea class="note-input" placeholder="e.g. slow eccentric, felt strong..." data-nk="'+jNkEnc+'" data-profile="jewel" onchange="saveJNoteBtn(this)">'+jSavedNote+'</textarea></div>';
+    div.innerHTML=exHtml;wc.appendChild(div);
   });
   cont.appendChild(wc);
+}
+
+// Jewel skip/add set registry
+window._jSkipReg={};window._jSkipIdx=0;
+window._jPendingSkip=null;
+
+function jSkipByIdx(i){
+  const p=window._jSkipReg[i];if(!p)return;
+  if(p.addSet){
+    const k='extrasets__'+JST.wk+'__'+p.day+'__'+p.n;
+    JST.wd[k]=(JST.wd[k]||0)+1;jsave();renderJDayView();return;
+  }
+  const key='skipped__'+JST.wk+'__'+p.day+'__'+p.n;
+  if(p.skipped){delete JST.wd[key];jsave();renderJDayView();}
+  else{
+    window._jPendingSkip={key};
+    const title=document.getElementById('skip-modal-title');
+    const sub=document.getElementById('skip-modal-sub');
+    if(title)title.textContent='Remove "'+p.n+'"?';
+    if(sub)sub.textContent='Hidden from today. Tap ↩ to restore anytime.';
+    // Override doSkip for jewel
+    window._pendingSkipIsJewel=true;
+    document.getElementById('skip-modal').classList.add('show');
+  }
 }
 
 function adjJFromBtn(btn){
   const scrollY=window.scrollY;
   const sk=btn.dataset.sk;const f=btn.dataset.f;const d=parseFloat(btn.dataset.d);
+  const n=decodeURIComponent(btn.dataset.n);const day=decodeURIComponent(btn.dataset.day);const s=btn.dataset.s;
   if(!JST.wd[sk])JST.wd[sk]={};
-  const cur=JST.wd[sk][f]!==undefined&&JST.wd[sk][f]!==''?parseFloat(JST.wd[sk][f])||0:0;
+  // Seed from last week if not yet logged this session
+  let cur;
+  if(JST.wd[sk][f]!==undefined&&JST.wd[sk][f]!==''){
+    cur=parseFloat(JST.wd[sk][f])||0;
+  } else {
+    cur=0;
+  }
   const neo=Math.max(0,cur+d);JST.wd[sk][f]=neo.toString();
   const wtEl=document.getElementById('jwv__'+sk);const rpEl=document.getElementById('jrv__'+sk);
   if(f==='wt'&&wtEl)wtEl.textContent=neo||'—';
   if(f==='reps'&&rpEl)rpEl.textContent=neo||'—';
-  jsave();requestAnimationFrame(()=>window.scrollTo(0,scrollY));
+  // Fire rest timer when reps logged - same as FORGE
+  if(f==='reps'&&neo>0){
+    const ph=jPhaseFor(JST.wk);
+    const dayData=ph?ph.days.find(dd=>dd.day===day):null;
+    const ex=dayData?dayData.exercises.find(e=>e.n===n):null;
+    const totalSets=ex?(typeof ex.sets==='number'?ex.sets:1):3;
+    const setNum=parseInt(s);
+    let nextEx=null;
+    if(ex&&dayData&&setNum>=totalSets){
+      const exIdx=dayData.exercises.findIndex(e=>e.n===n);
+      if(exIdx>=0&&exIdx+1<dayData.exercises.length)nextEx=dayData.exercises[exIdx+1].n;
+    } else if(ex&&setNum<totalSets){
+      nextEx=ex.n+' set '+(setNum+1);
+    }
+    startRest(n,setNum,totalSets,nextEx);
+  }
+  // Update Jewel exercise history for plateau detection
+  (()=>{
+    const jHK=day+'__'+n;
+    const jph=jPhaseFor(JST.wk);const jdd=jph?jph.days.find(d=>d.day===day):null;
+    const jex=jdd?jdd.exercises.find(e=>e.n===n):null;
+    if(!jex)return;
+    const jns=typeof jex.sets==='number'?jex.sets:1;
+    let jbw=0,jbr=0;
+    for(let si=1;si<=jns;si++){const jsk=JST.wk+'__'+day+'__'+n+'__s'+si;const jsv=JST.wd[jsk]||{};if(parseFloat(jsv.wt)>jbw)jbw=parseFloat(jsv.wt);if(parseInt(jsv.reps)>jbr)jbr=parseInt(jsv.reps);}
+    if(!JST.wd[jHK])JST.wd[jHK]=[];
+    const jei=JST.wd[jHK].findIndex(h=>h.week===JST.wk);
+    const jentry={bestWeight:jbw,bestReps:jbr,week:JST.wk,date:new Date().toLocaleDateString()};
+    if(jei>=0)JST.wd[jHK][jei]=jentry;else JST.wd[jHK].unshift(jentry);
+    if(JST.wd[jHK].length>8)JST.wd[jHK].pop();
+  })();
+  // Update row color
+  requestAnimationFrame(()=>{
+    window.scrollTo(0,scrollY);
+    const jRow=document.getElementById('jsr__'+sk);
+    if(jRow){
+      const sv2=JST.wd[sk]||{};
+      const prevWkSk2=(JST.wk-1)+'__'+sk.split('__').slice(1).join('__');
+      const prevSet2=JST.wd[prevWkSk2]||{};
+      const hasLogged2=sv2.wt!==undefined&&sv2.wt!=='';
+      const isPR2=hasLogged2&&parseFloat(prevSet2.wt)>0&&(parseFloat(sv2.wt)>parseFloat(prevSet2.wt)||parseInt(sv2.reps)>parseInt(prevSet2.reps));
+      jRow.className='set-row'+(isPR2?' pr-set':hasLogged2?' done-set':'');
+    }
+    // Update display value color
+    const wtEl=document.getElementById('jwv__'+sk);const rpEl=document.getElementById('jrv__'+sk);
+    if(f==='wt'&&wtEl){wtEl.textContent=neo||'—';wtEl.className='set-val-display'+(neo>0?' pr-val':'');}
+    if(f==='reps'&&rpEl){rpEl.textContent=neo||'—';rpEl.className='set-val-display'+(neo>0?' pr-val':'');}
+  });
+  jsave();
+}
+
+function togJNoteBtn(el){
+  const key=decodeURIComponent(el.dataset.nk);
+  const area=el.nextElementSibling;area.classList.toggle('open');
+  el.textContent=area.classList.contains('open')?(JST.wd[key]?'Edit note':'+ Add note'):'+ Add note';
+}
+function saveJNoteBtn(ta){
+  const key=decodeURIComponent(ta.dataset.nk);
+  JST.wd[key]=ta.value;jsave();
 }
 
 /* JEWEL RUNNING */
