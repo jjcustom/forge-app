@@ -263,6 +263,14 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 .profile-btn{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.2s;text-align:center}
 .profile-btn.forge-active{background:var(--blue);border-color:var(--blue);color:#fff}
 .profile-btn.jewel-active{background:#ec4899;border-color:#ec4899;color:#fff}
+
+.profile-btn.ben-active{background:#22c55e;border-color:#22c55e;color:#fff}
+.ben-theme .nav-logo{color:#22c55e}
+.ben-theme .tab-btn.active{background:#22c55e;border-color:#22c55e}
+.ben-theme .wk-btn.active{background:#22c55e;border-color:#22c55e}
+.ben-theme .day-btn.active{color:#22c55e;border-bottom-color:#22c55e;background:rgba(34,197,94,0.1)}
+.ben-theme .btn-primary{background:#22c55e}
+
 /* JEWEL color overrides when her profile active */
 .jewel-theme .nav-logo{color:#ec4899}
 .jewel-theme .tab-btn.active{background:#ec4899;border-color:#ec4899}
@@ -323,6 +331,26 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
 .trend-neutral{background:var(--amber-dim);color:var(--amber)}
 .trend-empty{text-align:center;padding:20px;font-size:12px;color:var(--text3)}
 .sparkline{width:100%;height:40px}
+
+/* ── EXERCISE SWAP + DESCRIPTION ── */
+.ex-desc{font-size:10px;color:var(--text3);margin-top:2px;line-height:1.5;font-style:italic}
+.swap-wrap{margin-top:6px}
+.swap-toggle{font-size:10px;color:var(--amber);cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:2px 0}
+.swap-toggle:before{content:'⇄'}
+.swap-panel{display:none;margin-top:6px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px}
+.swap-panel.open{display:block}
+.swap-panel-title{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px}
+.swap-options{display:flex;flex-direction:column;gap:4px}
+.swap-option{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;cursor:pointer;font-size:12px;color:var(--text2);text-align:left;font-family:inherit;transition:all 0.15s;touch-action:manipulation}
+.swap-option:active{background:var(--amber-dim);border-color:var(--amber);color:var(--amber)}
+.swap-option.active-swap{background:var(--amber-dim);border-color:var(--amber);color:var(--amber)}
+.swapped-badge{font-size:9px;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.4);color:var(--amber);padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:middle}
+
+.date-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:var(--surface);border-bottom:1px solid var(--border)}
+.date-day{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:0.6px;text-transform:uppercase}
+.date-full{font-size:11px;color:var(--text3);font-weight:500}
+.ben-theme .date-day{color:#22c55e}
+.jewel-theme .date-day{color:#ec4899}
 </style>
 </head>
 <body>
@@ -363,8 +391,13 @@ select{background:var(--surface2);border:1px solid var(--border2);border-radius:
   <div style="text-align:right"><div style="font-size:13px;font-weight:600" id="nav-wt">215 lbs</div><div style="font-size:10px;color:var(--text3)">Current weight</div></div>
 </div>
 <div class="profile-bar">
-  <button class="profile-btn forge-active" id="forge-btn" onclick="switchProfile('forge')">⚡ FORGE — Jacob</button>
-  <button class="profile-btn" id="jewel-btn" onclick="switchProfile('jewel')">💎 JEWEL — Jewel</button>
+  <button class="profile-btn forge-active" id="forge-btn" onclick="switchProfile('forge')">⚡ FORGE</button>
+  <button class="profile-btn" id="jewel-btn" onclick="switchProfile('jewel')">💎 JEWEL</button>
+  <button class="profile-btn" id="ben-btn" onclick="switchProfile('ben')">💪 BEN</button>
+</div>
+<div class="date-bar" id="date-bar">
+  <div class="date-day" id="date-day">—</div>
+  <div class="date-full" id="date-full">—</div>
 </div>
 <div class="tabs">
   <button class="tab-btn active" onclick="showTab('dash')">Dashboard</button>
@@ -1366,9 +1399,16 @@ function renderDayView(){
     const _si=window._skipIdx++;
     window._skipReg[_si]={n:ex.n,day:dayData.day,skipped:isSkipped};
     const skipBtn='<button type="button" onclick="skipByIdx('+_si+')" style="background:'+skipBtnBg+';border:1px solid var(--border2);color:'+skipBtnColor+';font-size:18px;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:8px;-webkit-appearance:none;touch-action:manipulation;user-select:none;-webkit-user-select:none;">'+skipBtnLabel+'</button>';
+    // Get swap and effective exercise name
+    const forgeSwap=getSwappedEx(ST.wk,dayData.day,ex.n,'forge');
+    const effectiveName=forgeSwap||ex.n;
+    const isSwapped=!!forgeSwap;
+    const exDesc=EX_DESC[effectiveName]||EX_DESC[ex.n]||'';
+    const swapBadge=isSwapped?'<span class="swapped-badge">Swapped</span>':'';
     // Build ex-top with skip button INSIDE the flex container
     let top='<div class="ex-top" style="align-items:center;gap:4px">'
-      +'<div style="flex:1;min-width:0"><div class="ex-name">'+ex.n+(isSkipped?'<span style="font-size:9px;color:var(--red);margin-left:6px;background:var(--red-dim);padding:1px 6px;border-radius:4px">Skipped</span>':'')+'</div>'
+      +'<div style="flex:1;min-width:0"><div class="ex-name">'+(isSwapped?effectiveName:ex.n)+swapBadge+(isSkipped?'<span style="font-size:9px;color:var(--red);margin-left:6px;background:var(--red-dim);padding:1px 6px;border-radius:4px">Skipped</span>':'')+'</div>'
+      +(exDesc?'<div class="ex-desc">'+exDesc+'</div>':'')
       +'<div class="ex-meta">'+ex.sets+'×'+ex.reps+' · '+ex.eq+'</div>'+mt+prevBadge+ni+'</div>';
     if(plat)top+='<div style="display:flex;align-items:center;gap:4px"><div class="plateau-tag"><div class="pdot"></div>PLATEAU</div>'+skipBtn+'</div>';
     else top+=skipBtn;
@@ -1378,9 +1418,11 @@ function renderDayView(){
     const extraSets=ST.wd[extraSetsKey]||0;
     const ns=(typeof ex.sets==='number'?ex.sets:1)+extraSets;
     let sc='<div class="sets-container">';
+    // Use effective name for set storage so swapped exercise tracks separately
+    const storeExName=effectiveName;
     for(let s=1;s<=ns;s++){
-      const sk=ST.wk+'__'+dayData.day+'__'+ex.n+'__s'+s;const sv=ST.wd[sk]||{};
-      const sug=getSuggest(ex.n,dayData.day,s);
+      const sk=ST.wk+'__'+dayData.day+'__'+storeExName+'__s'+s;const sv=ST.wd[sk]||{};
+      const sug=getSuggest(storeExName,dayData.day,s);
       const curWt=sv.wt!==undefined&&sv.wt!==''?parseFloat(sv.wt)||0:sug.wt;
       const curReps=sv.reps!==undefined&&sv.reps!==''?parseInt(sv.reps)||0:sug.reps;
       const pw=sug.prevWt||0;const pr=sug.prevReps||0;
@@ -1389,8 +1431,8 @@ function renderDayView(){
       const isPreFill=!hasData&&curWt>0;
       const rowCls=isPR?'pr-set':hasData?'done-set':'';
       const tgtTxt=pw>0?'Last: '+pw+'lbs × '+pr+' reps — beat it':curWt>0?'Suggested: '+curWt+'lbs':'First time — log it';
-      const exEnc=encodeURIComponent(ex.n);const dayEnc=encodeURIComponent(dayData.day);
-      const wtInc=getWtIncrement(ex.n);
+      const exEnc=encodeURIComponent(storeExName);const dayEnc=encodeURIComponent(dayData.day);
+      const wtInc=getWtIncrement(storeExName);
       sc+='<div class="set-row '+rowCls+'" id="sr__'+sk+'">'
         +'<div class="set-num">S'+s+'</div>'
         +'<div class="set-field"><div class="set-field-lbl">Weight</div>'
@@ -1419,7 +1461,8 @@ function renderDayView(){
     const noteHtml='<span class="note-toggle" data-nk="'+nkEnc+'" onclick="togNoteBtn(this)">'+(savedNote?'Edit note':'+ Add note')+'</span>'
       +'<div class="note-area'+(savedNote?' open':'')+'">'
       +'<textarea class="note-input" placeholder="e.g. slow eccentric, felt strong..." data-nk="'+nkEnc+'" onchange="saveExNoteBtn(this)">'+savedNote+'</textarea></div>';
-    div.innerHTML=top+sc+noteHtml;wc.appendChild(div);
+    const swapHtml=buildSwapPanel(ex.n,ST.wk,dayData.day,'forge',forgeSwap);
+    div.innerHTML=top+sc+noteHtml+swapHtml;wc.appendChild(div);
   }
   // Add exercise panel at bottom of workout card
   const addedKey='added__'+ST.wk+'__'+dayData.day;
@@ -1903,13 +1946,15 @@ function addExToDay(day){
   const customInp=document.getElementById('add-ex-custom-'+day);
   const exName=customInp&&customInp.value.trim()?customInp.value.trim():(sel?sel.value:'');
   if(!exName||exName==='--')return;
-  const key='added__'+ST.wk+'__'+day;
-  if(!ST.wd[key])ST.wd[key]=[];
-  if(ST.wd[key].find(e=>e.n===exName))return; // already added
-  ST.wd[key].push({n:exName,sets:3,reps:'10-12',m:'compound',eq:'See notes',added:true});
+  const isJewel=activeProfile==='jewel';
+  const stObj=isJewel?JST:ST;const svFn=isJewel?jsave:save;const rnFn=isJewel?renderJDayView:renderStr;
+  const wk=isJewel?JST.wk:ST.wk;
+  const key='added__'+wk+'__'+day;
+  if(!stObj.wd[key])stObj.wd[key]=[];
+  if(stObj.wd[key].find(e=>e.n===exName))return;
+  stObj.wd[key].push({n:exName,sets:3,reps:'10-12',m:'compound',eq:'See notes',added:true});
   if(customInp)customInp.value='';
-  save();
-  renderStr();
+  svFn();rnFn();
 }
 
 function removeAddedEx(day,exName){
@@ -1941,6 +1986,165 @@ function buildAddExPanel(day){
 
 // confirmSkipEx replaced by event delegation handleSkipClick
 
+
+
+/* ══════════════════════════════════════
+   EXERCISE DESCRIPTIONS + SWAP VARIANTS
+   ══════════════════════════════════════ */
+
+const EX_DESC = {
+  // Chest
+  'Barbell bench press': 'Lie flat, grip just outside shoulder width, lower bar to lower chest, drive up',
+  'Barbell bench press near max': 'Lie flat, grip just outside shoulder width, lower bar to lower chest, drive up',
+  'Barbell bench press near 1RM': 'Near max effort — spotter recommended, full ROM, 2 sec descent',
+  'Incline DB press': 'Bench at 30-45°, DBs at chest level, drive up and slightly inward',
+  'DB flat press': 'Lie flat, DBs at chest, drive up — wider ROM than barbell',
+  'Close-grip barbell press': 'Grip shoulder-width, elbows tucked in — tricep focus not chest',
+  // Shoulders
+  'DB shoulder press': 'Seated or standing, DBs at ear height, drive straight up overhead',
+  'DB Arnold press': 'Start with palms facing you, rotate outward as you press up — full activation',
+  'Seated DB shoulder press': 'Seated back supported — eliminates leg drive, pure shoulder isolation',
+  'Cable lateral raise': 'Low pulley, single handle, arm out to side — constant tension all the way down',
+  'DB lateral raise': 'DBs at sides, raise to parallel — 2 sec descent, pinky slightly higher than thumb',
+  'DB lateral raise — drop set': 'Heavy set immediately followed by lighter weight — no rest between',
+  'Cable rear delt fly': 'Low pulley cross-body — pull across to opposite side, squeeze rear delt',
+  'DB rear delt fly bent-over': 'Chest on incline bench, slight elbow bend, pull back and up to ear height',
+  'Cable face pull': 'Rope at face height, pull to forehead splitting rope apart — rotator cuff + rear delt',
+  'DB reverse fly standing': 'Hinge 45°, pull DBs back and up — think rowing to ear height',
+  'Band face pull': 'Band at face height — same as cable, squeeze rear delts at full extension',
+  'Barbell overhead press': 'Bar at collar bone, drive straight up, lock out overhead — brace core hard',
+  'Barbell push press': 'Small knee dip then drive bar overhead — legs help initiate the press',
+  // Back / Lats
+  'Barbell bent-over row': 'Hinge 45°, pull bar to lower chest — 1 sec pause at top, squeeze shoulder blades',
+  'Barbell bent-over row heavy': 'Hinge 45°, heavy load — drive elbows back, no swinging',
+  'Barbell bent-over row near max': 'Max load — minimal body English, full contraction at top',
+  'DB single-arm row': 'Knee on bench, pull DB to hip — full stretch at bottom, squeeze at top',
+  'DB single-arm row heavier': 'Heavier load — brace on bench, drive elbow back past hip',
+  'Chest-supported DB row': 'Chest on incline bench — eliminates lower back, pure back isolation',
+  'Ring row': 'Heels on floor or elevated, body straight, pull rings to chest',
+  'Ring row feet elevated': 'Feet raised increases difficulty — body angle determines load',
+  'Weighted ring pull-up': 'Full dead hang start, drive elbows down — weight vest or belt',
+  'Straight arm lat pulldown': 'Arms locked straight, pull bar from overhead to hips — pure lat',
+  'DB bent-over row': 'Both DBs simultaneously — hinge forward, drive elbows back',
+  // Biceps
+  'EZ bar bicep curl': 'EZ bar reduces wrist strain — full extension at bottom, squeeze at top',
+  'DB hammer curl': 'Neutral grip thumbs up — builds brachialis for arm thickness',
+  'Cable bicep curl': 'Constant tension through full range — better peak contraction than free weights',
+  'Cable hammer curl': 'Rope attachment neutral grip — hits brachialis harder than DB version',
+  'Incline DB curl': 'Bench at 45° seated — full stretch at bottom = maximum bicep peak stimulus',
+  'EZ bar preacher curl bench as pad': 'Arm over incline bench edge — isolates the bicep peak completely',
+  // Triceps
+  'EZ bar skull crusher': 'Lie flat, lower bar to forehead, extend to lockout — elbows locked in',
+  'Cable tricep pushdown straight bar': 'Straight bar, elbows locked at sides, push down to full lockout',
+  'Cable tricep pushdown rope': 'Rope attachment — split hands at bottom for peak contraction',
+  'Cable overhead tricep extension': 'Face away, rope overhead — full long head stretch at start position',
+  'DB overhead tricep extension': 'DB overhead both hands — lower behind head, extend up',
+  'Tricep bench dip': 'Hands on box behind you, lower until 90° — plate on lap for resistance',
+  'Plyo box tricep dip': 'Same as bench dip — controlled descent, lock out at top',
+  'DB tricep kickback': 'Hinge forward, elbow locked high, extend fully — squeeze at lockout',
+  'Band tricep pushdown': 'Band version of cable pushdown — good pump finisher',
+  'Close-grip push-up': 'Hands shoulder-width, elbows tucked — tricep focus version of push-up',
+  // Legs / Glutes
+  'Barbell back squat': 'Bar on traps, sit back and down — knees track over toes, chest up',
+  'Barbell back squat heavy': 'Heavy load — brace hard, controlled descent, drive through heels',
+  'Barbell box squat': 'Sit fully onto box and pause — eliminates stretch reflex, pure strength',
+  'DB front rack squat': 'DBs on shoulders elbows forward — keeps torso upright, knee-friendly',
+  'DB goblet squat heavier': 'Hold DB at chest — heavier than KB allows, same upright torso',
+  'KB goblet squat': 'KB at chest, elbows inside knees — relearn squat pattern safely',
+  'Barbell Romanian deadlift': 'Hip hinge back — soft knee, bar close to legs, feel hamstring stretch',
+  'Barbell RDL heavier': 'Same as RDL with progressive load — maintain flat back throughout',
+  'Single-leg RDL with DB': 'Balance on one leg, hinge forward — builds MPFL stabilizers',
+  'Single-leg RDL bodyweight': 'Bodyweight balance hinge — VMO and glute med rehab focus',
+  'Barbell hip thrust': 'Shoulders on bench, drive hips up — 1 sec squeeze at top',
+  'Barbell hip thrust heavier': 'Progressive load — drive through heels, neutral spine at top',
+  'Glute bridge floor': 'Flat on floor, drive hips up — longer pause compensates for reduced range',
+  'DB walking lunges': 'Step long, lower back knee to floor — front shin stays vertical',
+  'DB Bulgarian split squat': 'Rear foot elevated, lower until front thigh parallel — deep stretch',
+  'DB Bulgarian split squat heavy': 'Heavy load split squat — brace core, controlled all the way down',
+  'Back step lunge': 'Step backward — less knee stress than forward lunge, same glute stimulus',
+  'Reverse lunge': 'Step back, lower to floor — knee-friendly version of lunge pattern',
+  'Box step-up controlled': 'Step onto box with lead leg, drive through heel — no push from back foot',
+  'Box step-up DB in hands': 'DBs at sides, step up controlled — lead leg does all the work',
+  'Standing calf raise': 'Full range — heels drop below platform at bottom, full extension at top',
+  'Single-leg calf raise': 'Balance on one foot — builds stability and calf strength together',
+  'Nordic curl negative': 'Kneel, lock feet, lower slowly to floor — eccentric hamstring strength',
+  // Core
+  'Plank': 'Forearms down, straight body — brace abs, glutes, and quads simultaneously',
+  'Dead bug': 'On back, opposite arm and leg extend — lower back pressed to floor the whole time',
+  'Hollow hold': 'Lower back flat, arms and legs raised — full core tension hold',
+  'Hanging knee raise': 'Dead hang, drive knees to chest — control the descent',
+  'Hanging leg raise': 'Dead hang, raise straight legs to parallel — lower abs focus',
+  'Russian twist': 'Seated, lean back slightly, rotate side to side — oblique focus',
+  'Russian twist weighted': 'KB or plate — same rotation with added load',
+  'Plank to push-up': 'Alternate forearm plank to push-up position — core stability + shoulder',
+  // Conditioning
+  'KB swing': 'Hinge hard, drive hips — arms are just a hook, power comes from the hips',
+  'KB swing heavy': 'Heavier KB same pattern — explosive hip snap, bell floats to eye level',
+  'Barbell power clean': 'Hip hinge, explosive pull, catch in front rack — full body power',
+  'Barbell complex: RDL + row + clean + press': 'No putting the bar down — 6 movements in sequence',
+  // Rehab
+  'Terminal knee extension TKE': 'Band behind knee, straighten leg fully — VMO activation',
+  'Straight leg raise SLR': 'Lie flat, raise straight leg — hold 2 sec at top',
+  'Clamshell': 'Side lying, knees bent, raise top knee — hip abduction, glute med',
+  'Knee rehab circuit': 'TKEs, SLRs, clamshells, glute bridge — full circuit light band',
+};
+
+const EX_SWAPS = {
+  // Squat pattern
+  'Barbell back squat': ['Barbell box squat','DB front rack squat','DB goblet squat heavier','Barbell box squat with pause'],
+  'Barbell box squat': ['Barbell back squat','DB front rack squat','DB goblet squat heavier','DB Bulgarian split squat'],
+  'DB goblet squat heavier': ['Barbell box squat','DB front rack squat','Barbell back squat'],
+  'DB front rack squat': ['Barbell box squat','DB goblet squat heavier','Barbell back squat'],
+  // Hinge pattern
+  'Barbell Romanian deadlift': ['Barbell RDL heavier','Single-leg RDL with DB','Single-leg RDL bodyweight','KB deadlift'],
+  'Barbell RDL heavier': ['Barbell Romanian deadlift','Single-leg RDL with DB','DB single-leg RDL'],
+  'Single-leg RDL with DB': ['Single-leg RDL bodyweight','Barbell Romanian deadlift','Back step lunge'],
+  'Single-leg RDL bodyweight': ['Single-leg RDL with DB','Barbell Romanian deadlift'],
+  // Lunge pattern
+  'DB walking lunges': ['Back step lunge','Reverse lunge','DB Bulgarian split squat','Box step-up DB in hands'],
+  'DB Bulgarian split squat': ['Back step lunge','Reverse lunge','DB walking lunges','Box step-up controlled'],
+  'DB Bulgarian split squat heavy': ['Back step lunge','Reverse lunge','DB walking lunges','Box step-up DB in hands'],
+  'Back step lunge': ['DB walking lunges','Reverse lunge','DB Bulgarian split squat'],
+  'Reverse lunge': ['Back step lunge','DB walking lunges','DB Bulgarian split squat'],
+  // Hip thrust
+  'Barbell hip thrust': ['Glute bridge floor','Barbell hip thrust heavier','Single-leg glute bridge'],
+  'Barbell hip thrust heavier': ['Glute bridge floor','Barbell hip thrust','Single-leg glute bridge'],
+  'Glute bridge floor': ['Barbell hip thrust','Barbell hip thrust heavier','Single-leg glute bridge'],
+  // Step ups
+  'Box step-up controlled': ['Back step lunge','Reverse lunge','DB walking lunges'],
+  'Box step-up DB in hands': ['Back step lunge','Reverse lunge','DB walking lunges','DB Bulgarian split squat'],
+  // Row pattern
+  'Barbell bent-over row': ['DB single-arm row','Chest-supported DB row','Cable row','DB bent-over row'],
+  'Barbell bent-over row heavy': ['DB single-arm row','Chest-supported DB row','Barbell bent-over row'],
+  'Barbell bent-over row near max': ['DB single-arm row','Chest-supported DB row'],
+  'DB single-arm row': ['Chest-supported DB row','Barbell bent-over row','DB bent-over row'],
+  'DB single-arm row heavier': ['Chest-supported DB row','Barbell bent-over row','DB bent-over row'],
+  'Chest-supported DB row': ['DB single-arm row','Barbell bent-over row','Ring row feet elevated'],
+  // Face pull / rear delt
+  'Cable face pull': ['DB rear delt fly bent-over','Chest-supported DB row','Band face pull','DB reverse fly standing'],
+  'Band face pull': ['DB rear delt fly bent-over','Cable face pull','DB reverse fly standing'],
+  'DB rear delt fly bent-over': ['Cable face pull','Band face pull','DB reverse fly standing'],
+  'DB reverse fly standing': ['Cable face pull','DB rear delt fly bent-over','Band face pull'],
+  // Lateral raise
+  'Cable lateral raise': ['DB lateral raise','DB lateral raise — drop set'],
+  'DB lateral raise': ['Cable lateral raise','DB lateral raise — drop set'],
+  'DB lateral raise — drop set': ['Cable lateral raise','DB lateral raise'],
+  // Press
+  'Barbell bench press': ['DB flat press','Incline DB press','DB flat press'],
+  'Incline DB press': ['DB flat press','Barbell bench press','DB incline press'],
+  // Pull ups / rows
+  'Weighted ring pull-up': ['Ring row feet elevated','Ring row','Band-assisted pull-up'],
+  'Ring row feet elevated': ['Weighted ring pull-up','Ring row','Chest-supported DB row'],
+  // Bicep
+  'EZ bar bicep curl': ['Cable bicep curl','Incline DB curl','DB hammer curl'],
+  'Cable bicep curl': ['EZ bar bicep curl','Incline DB curl','DB hammer curl'],
+  'DB hammer curl': ['Cable hammer curl','EZ bar bicep curl','Cable bicep curl'],
+  // Tricep
+  'Cable tricep pushdown rope': ['Cable tricep pushdown straight bar','EZ bar skull crusher','DB overhead tricep extension'],
+  'Cable tricep pushdown straight bar': ['Cable tricep pushdown rope','EZ bar skull crusher','Tricep bench dip'],
+  'EZ bar skull crusher': ['Cable tricep pushdown rope','DB overhead tricep extension','Close-grip barbell press'],
+  'Cable overhead tricep extension': ['DB overhead tricep extension','EZ bar skull crusher','Cable tricep pushdown rope'],
+};
 
 /* ══════════════════════════════════════
    JEWEL PROGRAM DATA
@@ -2091,36 +2295,56 @@ let activeProfile = 'forge';
 
 function switchProfile(p){
   activeProfile = p;
-  const forgeEl = document.getElementById('tab-dash')?.closest('.section')?.parentElement;
-  const forgeTabs = document.querySelector('.tabs:not(#jewel-tabs)');
   const jewelProfile = document.getElementById('jewel-profile');
-  const forgeProfileSections = document.querySelectorAll('body > .section, body > div.tabs:not(#jewel-tabs)');
+  const benProfile = document.getElementById('ben-profile');
   const forgeBtn = document.getElementById('forge-btn');
   const jewelBtn = document.getElementById('jewel-btn');
+  const benBtn = document.getElementById('ben-btn');
   const nav = document.querySelector('.nav-logo');
+  const forgeOwnTabs = document.querySelector('body > .tabs');
+
+  // Hide all
+  if(forgeOwnTabs) forgeOwnTabs.style.display = 'none';
+  document.querySelectorAll('body > .section').forEach(s=>s.style.display='none');
+  if(jewelProfile) jewelProfile.style.display = 'none';
+  if(benProfile) benProfile.style.display = 'none';
+  document.body.classList.remove('jewel-theme','ben-theme');
+  if(forgeBtn) forgeBtn.className = 'profile-btn';
+  if(jewelBtn) jewelBtn.className = 'profile-btn';
+  if(benBtn) benBtn.className = 'profile-btn';
 
   if(p === 'jewel'){
-    // Hide forge tabs and show jewel
-    document.querySelector('.tabs').style.display = 'none';
-    document.querySelectorAll('body > .section').forEach(s=>s.style.display='none');
-    jewelProfile.style.display = 'block';
+    if(jewelProfile) jewelProfile.style.display = 'block';
     document.body.classList.add('jewel-theme');
-    forgeBtn.className = 'profile-btn';
-    jewelBtn.className = 'profile-btn jewel-active';
-    if(nav)nav.textContent = 'JEWEL';
-    document.querySelector('.nav-sub').textContent = '12-Week Program';
+    if(jewelBtn) jewelBtn.className = 'profile-btn jewel-active';
+    if(nav) nav.textContent = 'JEWEL';
+    const sub=document.querySelector('.nav-sub');if(sub)sub.textContent = '12-Week Program';
     document.getElementById('nav-wt').textContent = JST.wt + ' lbs';
     showJTab('jdash');
-    renderJDash();
+  } else if(p === 'ben'){
+    if(benProfile) benProfile.style.display = 'block';
+    document.body.classList.add('ben-theme');
+    if(benBtn) benBtn.className = 'profile-btn ben-active';
+    if(nav) nav.textContent = 'BEN';
+    const sub=document.querySelector('.nav-sub');if(sub)sub.textContent = '8-Week Program · Wk '+getBenCurrentWeek();
+    document.getElementById('nav-wt').textContent = (BST.wt||'—') + ' lbs';
+    // Auto-jump to current week and day if first time
+    if(!BST._initialized){
+      BST.wk = getBenCurrentWeek();
+      const today=new Date();
+      const todayName=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][today.getDay()];
+      // Map weekend days to Saturday for the workout slot
+      BST.day = (todayName==='Saturday'||todayName==='Sunday')?'Saturday':todayName;
+      BST._initialized = true;
+      bsave();
+    }
+    showBTab('bdash');
   } else {
-    document.querySelector('.tabs').style.display = '';
+    if(forgeOwnTabs) forgeOwnTabs.style.display = '';
     document.querySelectorAll('body > .section').forEach(s=>s.style.display='');
-    jewelProfile.style.display = 'none';
-    document.body.classList.remove('jewel-theme');
-    forgeBtn.className = 'profile-btn forge-active';
-    jewelBtn.className = 'profile-btn';
-    if(nav)nav.textContent = 'FORGE';
-    document.querySelector('.nav-sub').textContent = '8-Week Program';
+    if(forgeBtn) forgeBtn.className = 'profile-btn forge-active';
+    if(nav) nav.textContent = 'FORGE';
+    const sub=document.querySelector('.nav-sub');if(sub)sub.textContent = '8-Week Program';
     document.getElementById('nav-wt').textContent = ST.wt + ' lbs';
     showTab('dash');
   }
@@ -2245,10 +2469,17 @@ function renderJDayView(){
     div.className='ex-row'+(isSkippedJ?' plateau':jIsPlat?' plateau':ex.m&&ex.m!=='compound'?' focus-muscle':'');
     if(isSkippedJ)div.style.opacity='0.5';
     const jPlatTag=jIsPlat?'<div class="plateau-tag" style="margin-right:4px"><div class="pdot"></div>PLATEAU</div>':'';
-    let exHtml='<div class="ex-top" style="align-items:center;gap:4px"><div style="flex:1;min-width:0"><div class="ex-name">'+ex.n+(isSkippedJ?'<span style="font-size:9px;color:var(--red);margin-left:6px;background:var(--red-dim);padding:1px 6px;border-radius:4px">Skipped</span>':'')+'</div><div class="ex-meta">'+ns+'×'+ex.reps+' · '+ex.eq+'</div>'+mt+ni+'</div>'+(jIsPlat?jPlatTag:'')+jSkipBtn+'</div>';
+    // Swap for Jewel
+    const jewelSwap=getSwappedEx(JST.wk,dayData.day,ex.n,'jewel');
+    const jEffName=jewelSwap||ex.n;
+    const jIsSwapped=!!jewelSwap;
+    const jExDesc=EX_DESC[jEffName]||EX_DESC[ex.n]||'';
+    const jSwapBadge=jIsSwapped?'<span class="swapped-badge">Swapped</span>':'';
+    let exHtml='<div class="ex-top" style="align-items:center;gap:4px"><div style="flex:1;min-width:0"><div class="ex-name">'+(jIsSwapped?jEffName:ex.n)+jSwapBadge+(isSkippedJ?'<span style="font-size:9px;color:var(--red);margin-left:6px;background:var(--red-dim);padding:1px 6px;border-radius:4px">Skipped</span>':'')+'</div>'+(jExDesc?'<div class="ex-desc">'+jExDesc+'</div>':'')+'<div class="ex-meta">'+ns+'×'+ex.reps+' · '+ex.eq+'</div>'+mt+ni+'</div>'+(jIsPlat?jPlatTag:'')+jSkipBtn+'</div>';
     exHtml+='<div class="sets-container">';
+    const jStoreExName=jEffName;
     for(let s=1;s<=ns;s++){
-      const sk=JST.wk+'__'+dayData.day+'__'+ex.n+'__s'+s;const sv=JST.wd[sk]||{};
+      const sk=JST.wk+'__'+dayData.day+'__'+jStoreExName+'__s'+s;const sv=JST.wd[sk]||{};
       // Pre-fill from last week
       const prevWkSk=(JST.wk-1)+'__'+dayData.day+'__'+ex.n+'__s'+s;
       const prevSet=JST.wd[prevWkSk]||{};
@@ -2260,7 +2491,7 @@ function renderJDayView(){
       const isPreFill=!hasLogged&&prevWt>0;
       const rowCls='set-row'+(isPR?' pr-set':hasLogged?' done-set':'');
       const wtDisp=curWt||'—';const repsDisp=curReps||'—';
-      const exEnc=encodeURIComponent(ex.n);const dayEnc=encodeURIComponent(dayData.day);const wtInc=getWtIncrement(ex.n);
+      const exEnc=encodeURIComponent(jStoreExName);const dayEnc=encodeURIComponent(dayData.day);const wtInc=getWtIncrement(jStoreExName);
       // Target text
       const tgtTxt=prevWt>0?'Wk'+(JST.wk-1)+': '+prevWt+'lbs x'+prevReps+' → beat it':'First time — log it';
       exHtml+='<div class="'+rowCls+'" id="jsr__'+sk+'">'
@@ -2291,9 +2522,59 @@ function renderJDayView(){
     exHtml+='<span class="note-toggle" data-nk="'+jNkEnc+'" data-profile="jewel" onclick="togJNoteBtn(this)">'+(jSavedNote?'Edit note':'+ Add note')+'</span>'
       +'<div class="note-area'+(jSavedNote?' open':'')+'">'
       +'<textarea class="note-input" placeholder="e.g. slow eccentric, felt strong..." data-nk="'+jNkEnc+'" data-profile="jewel" onchange="saveJNoteBtn(this)">'+jSavedNote+'</textarea></div>';
+    // Swap panel
+    exHtml+=buildSwapPanel(ex.n,JST.wk,dayData.day,'jewel',jewelSwap);
     div.innerHTML=exHtml;wc.appendChild(div);
   });
+  // Added exercises for Jewel
+  const jAddedKey='added__'+JST.wk+'__'+dayData.day;
+  const jAddedExercises=JST.wd[jAddedKey]||[];
+  jAddedExercises.forEach(aex=>{
+    const adiv=document.createElement('div');adiv.className='ex-row added-ex-row';
+    const aExEnc=encodeURIComponent(aex.n);const aDayEnc=encodeURIComponent(dayData.day);const aWtInc=getWtIncrement(aex.n);
+    const jAddNK='note__'+dayData.day+'__'+aex.n;const jAddNote=JST.wd[jAddNK]||'';const jAddNKEnc=encodeURIComponent(jAddNK);
+    const _jAI=window._jSkipIdx++;window._jSkipReg[_jAI]={addSet:true,n:aex.n,day:dayData.day,profile:'jewel'};
+    let ah='<div class="ex-top" style="align-items:center;gap:4px"><div style="flex:1;min-width:0"><div class="ex-name">'+aex.n+' <span style="font-size:9px;color:#ec4899;margin-left:4px">+ Added</span></div>'+(EX_DESC[aex.n]?'<div class="ex-desc">'+EX_DESC[aex.n]+'</div>':'')+'<div class="ex-meta">3×10-12</div></div>'
+      +'<button type="button" style="background:var(--red-dim);border:1px solid var(--red);border-radius:6px;color:var(--red);font-size:10px;padding:3px 8px;cursor:pointer;touch-action:manipulation;font-family:inherit" onclick="removeJAddedEx(this)" data-day="'+encodeURIComponent(dayData.day)+'" data-exn="'+encodeURIComponent(aex.n)+'" type="button">Remove</button></div>';
+    const jExtraSets2=JST.wd['extrasets__'+JST.wk+'__'+dayData.day+'__'+aex.n]||0;
+    ah+='<div class="sets-container">';
+    for(let s=1;s<=3+jExtraSets2;s++){
+      const sk3=JST.wk+'__'+dayData.day+'__'+aex.n+'__s'+s;const sv3=JST.wd[sk3]||{};
+      const cw3=sv3.wt!==undefined&&sv3.wt!==''?sv3.wt:'';const cr3=sv3.reps!==undefined&&sv3.reps!==''?sv3.reps:'';
+      ah+='<div class="set-row'+(cw3?' done-set':'')+'" id="jsr__'+sk3+'">'
+        +'<div class="set-num">S'+s+'</div>'
+        +'<div class="set-field"><div class="set-field-lbl">Weight</div><div class="adj-row">'
+        +'<button class="adj-btn" data-sk="'+sk3+'" data-f="wt" data-d="-'+aWtInc+'" data-n="'+aExEnc+'" data-day="'+aDayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">−</button>'
+        +'<div class="set-val-display" id="jwv__'+sk3+'">'+(cw3||'—')+'</div>'
+        +'<button class="adj-btn" data-sk="'+sk3+'" data-f="wt" data-d="'+aWtInc+'" data-n="'+aExEnc+'" data-day="'+aDayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">+</button>'
+        +'</div></div><div class="set-sep">×</div>'
+        +'<div class="set-field"><div class="set-field-lbl">Reps</div><div class="adj-row">'
+        +'<button class="adj-btn" data-sk="'+sk3+'" data-f="reps" data-d="-1" data-n="'+aExEnc+'" data-day="'+aDayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">−</button>'
+        +'<div class="set-val-display" id="jrv__'+sk3+'">'+(cr3||'—')+'</div>'
+        +'<button class="adj-btn" data-sk="'+sk3+'" data-f="reps" data-d="1" data-n="'+aExEnc+'" data-day="'+aDayEnc+'" data-s="'+s+'" onclick="adjJFromBtn(this)">+</button>'
+        +'</div></div></div>';
+    }
+    ah+='</div><button type="button" class="add-set-btn" onclick="jSkipByIdx('+_jAI+')">+ Add set</button>';
+    ah+='<span class="note-toggle" data-nk="'+jAddNKEnc+'" onclick="togJNoteBtn(this)">'+(jAddNote?'Edit note':'+ Add note')+'</span>'
+      +'<div class="note-area'+(jAddNote?' open':'')+'">'
+      +'<textarea class="note-input" placeholder="e.g. substitution..." data-nk="'+jAddNKEnc+'" onchange="saveJNoteBtn(this)">'+jAddNote+'</textarea></div>';
+    adiv.innerHTML=ah;wc.appendChild(adiv);
+  });
+  // Add exercise dropdown
+  const jAddPanel=document.createElement('div');
+  jAddPanel.innerHTML=buildAddExPanel(dayData.day);
+  wc.appendChild(jAddPanel);
   cont.appendChild(wc);
+}
+
+function removeJAddedEx(btn){
+  const day=decodeURIComponent(btn.dataset.day||'');
+  const exName=decodeURIComponent(btn.dataset.exn||'');
+  if(!day||!exName)return;
+  const key='added__'+JST.wk+'__'+day;
+  if(!JST.wd[key])return;
+  JST.wd[key]=JST.wd[key].filter(e=>e.n!==exName);
+  jsave();renderJDayView();
 }
 
 // Jewel skip/add set registry
@@ -2737,9 +3018,10 @@ setTimeout(updateApiKeyStatus, 500);
    AUTO-MATCH + TRENDS ENGINE
    ══════════════════════════════════════ */
 
-// Program start date - April 8 2026 (Jacob Week 1 Day 1)
-const FORGE_START = new Date('2026-04-08');
-const JEWEL_START = new Date('2026-04-08'); // adjust if different
+// Program start dates
+const FORGE_START = new Date('2026-04-08');  // Jacob Week 1 Day 1
+const JEWEL_START = new Date('2026-04-08');  // Jewel start
+const BEN_START = new Date('2026-04-29');    // Ben Week 1 begins Wed Apr 29 — first actual workout is Legs 1 on Fri May 1
 
 // Watch workout type → category mapping
 const WATCH_TYPE_MAP = {
@@ -2798,7 +3080,7 @@ function getDayName(date){
 // Auto-match scan to workout slot
 function autoMatchWorkout(profile, scanData, scanType){
   const date = parseScanDate(scanData.date);
-  const startDate = profile === 'forge' ? FORGE_START : JEWEL_START;
+  const startDate = profile === 'forge' ? FORGE_START : profile === 'ben' ? BEN_START : JEWEL_START;
   const week = getWeekFromDate(date, startDate);
   const dayName = getDayName(date);
   const category = classifyWatchType(scanData.type || scanType);
@@ -2831,8 +3113,8 @@ function logScannedWorkout(profile){
   if(!data) return;
 
   const match = autoMatchWorkout(profile, data, 'strength');
-  const stateObj = profile === 'forge' ? ST : JST;
-  const saveFunc = profile === 'forge' ? save : jsave;
+  const stateObj = profile === 'forge' ? ST : profile === 'ben' ? BST : JST;
+  const saveFunc = profile === 'forge' ? save : profile === 'ben' ? bsave : jsave;
 
   // Build workout entry
   const entry = {
@@ -2869,6 +3151,7 @@ function logScannedWorkout(profile){
 
   // Refresh trends
   if(profile === 'forge') renderForgeTrends();
+  else if(profile === 'ben') renderBenTrends();
   else renderJewelTrends();
 
   document.getElementById(scanId+'-result').style.display='none';
@@ -3179,6 +3462,355 @@ window.showJTab = function(t){
   if(t==='jtrends') renderJewelTrends();
 };
 
+
+/* ══════════════════════════════════════
+   EXERCISE SWAP ENGINE
+   ══════════════════════════════════════ */
+
+// Get the swapped exercise for a given week/day/original
+function getSwappedEx(wk, day, origName, profile){
+  const stateObj = profile==='jewel' ? JST : ST;
+  const swapKey = 'swap__'+wk+'__'+day+'__'+origName;
+  return stateObj.wd[swapKey] || null;
+}
+
+// Set swap for a week/day/original
+function setSwappedEx(wk, day, origName, newName, profile){
+  const stateObj = profile==='jewel' ? JST : ST;
+  const saveFunc = profile==='jewel' ? jsave : save;
+  const swapKey = 'swap__'+wk+'__'+day+'__'+origName;
+  if(newName === origName || !newName){
+    delete stateObj.wd[swapKey];
+  } else {
+    stateObj.wd[swapKey] = newName;
+  }
+  saveFunc();
+  if(profile==='jewel') renderJDayView();
+  else renderDayView();
+}
+
+// Get effective exercise name (swapped or original)
+function getEffectiveEx(wk, day, origName, profile){
+  return getSwappedEx(wk, day, origName, profile) || origName;
+}
+
+// Build swap panel HTML
+function buildSwapPanel(origName, wk, day, profile, currentSwap){
+  const variants = EX_SWAPS[origName] || [];
+  if(!variants.length) return '';
+  const profEnc = encodeURIComponent(profile);
+  const origEnc = encodeURIComponent(origName);
+  const dayEnc = encodeURIComponent(day);
+  let opts = variants.map(v=>{
+    const isActive = v === currentSwap;
+    return '<button type="button" class="swap-option'+(isActive?' active-swap':'')+'" onclick="doSwap('+wk+',\''+dayEnc+'\',\''+origEnc+'\',\''+encodeURIComponent(v)+'\',\''+profEnc+'\')">'+v+(EX_DESC[v]?'<div style="font-size:10px;color:var(--text3);margin-top:1px">'+EX_DESC[v].substring(0,60)+'...</div>':'')+'</button>';
+  }).join('');
+  // Add restore original if currently swapped
+  if(currentSwap){
+    opts = '<button type="button" class="swap-option" style="border-color:var(--green);color:var(--green)" onclick="doSwap('+wk+',\''+dayEnc+'\',\''+origEnc+'\',\''+origEnc+'\',\''+profEnc+'\')">↩ Restore: '+origName+'</button>' + opts;
+  }
+  return '<div class="swap-wrap"><span class="swap-toggle" onclick="togSwapPanel(this)"> Swap exercise</span>'
+    +'<div class="swap-panel"><div class="swap-panel-title">Replace with:</div><div class="swap-options">'+opts+'</div></div></div>';
+}
+
+function togSwapPanel(el){
+  const panel = el.nextElementSibling;
+  panel.classList.toggle('open');
+}
+
+function doSwap(wk, dayEnc, origEnc, newEnc, profEnc){
+  const day = decodeURIComponent(dayEnc);
+  const orig = decodeURIComponent(origEnc);
+  const newEx = decodeURIComponent(newEnc);
+  const prof = decodeURIComponent(profEnc);
+  setSwappedEx(wk, day, orig, newEx===orig?null:newEx, prof);
+}
+
+
+/* ══════════════════════════════════════
+   BEN PROFILE — Copy of FORGE
+   ══════════════════════════════════════ */
+
+let BST = {
+  wt: null, wtLog: [], wd: {}, wk: 1, day: 'Wednesday',
+  watchHistory: []
+};
+
+
+function getBenCurrentWeek(){
+  const today = new Date();
+  const diff = Math.floor((today - BEN_START) / (7 * 24 * 60 * 60 * 1000));
+  return Math.max(1, Math.min(8, diff + 1));
+}
+
+function getBenCurrentDay(){
+  const today = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  return days[today.getDay()];
+}
+
+function bsave(){try{localStorage.setItem('ben_v1',JSON.stringify(BST));}catch(e){}}
+function bload(){try{const d=localStorage.getItem('ben_v1');if(d)BST={...BST,...JSON.parse(d)};}catch(e){}}
+bload();
+
+function showBTab(t){
+  document.querySelectorAll('#ben-profile .tab-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+t+"'")));
+  document.querySelectorAll('#ben-profile .section').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('tab-'+t);
+  if(el) el.classList.add('active');
+  if(t==='bdash')renderBDash();
+  if(t==='bstr'){renderBStr();requestWakeLock();}else if(activeProfile==='ben')releaseWakeLock();
+  if(t==='btrends')renderBenTrends();
+  if(t==='bscan')updateBenApiKeyStatus();
+}
+
+function logBWt(){
+  const v=parseFloat(document.getElementById('bwi').value);if(!v||v<80||v>500)return;
+  BST.wt=v;BST.wtLog.unshift({date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),wt:v});
+  if(BST.wtLog.length>14)BST.wtLog.pop();bsave();renderBDash();
+}
+
+function renderBDash(){
+  const wEl=document.getElementById('bw');if(wEl)wEl.textContent=BST.wt||'—';
+  const navWt=document.getElementById('nav-wt');
+  if(navWt && activeProfile==='ben') navWt.textContent=(BST.wt||'—')+' lbs';
+  const sessEl=document.getElementById('bsess');
+  if(sessEl)sessEl.textContent=(BST.watchHistory||[]).length;
+  const wkNow=document.getElementById('bwk-now');if(wkNow)wkNow.textContent=getBenCurrentWeek();
+  const wh=document.getElementById('bwh');
+  // Today's workout label
+  const todayLabel=document.getElementById('ben-today-label');
+  if(todayLabel){
+    const today=new Date();
+    const dayName=getBenCurrentDay();
+    const wk=getBenCurrentWeek();
+    const ph=phFor(wk);
+    const todayDay=ph.days.find(d=>d.day===dayName);
+    const dateStr=today.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+    if(todayDay){
+      todayLabel.textContent=dateStr+' · Wk '+wk+' · '+todayDay.name;
+    } else {
+      todayLabel.textContent=dateStr+' · Wk '+wk+' · Rest day';
+    }
+  }
+  if(!BST.wtLog.length){wh.innerHTML='<div style="font-size:11px;color:var(--text3);text-align:center;padding:8px">No weight logs yet — enter your starting weight to begin</div>';return;}
+  wh.innerHTML=BST.wtLog.map((e,i)=>{
+    const prev=BST.wtLog[i+1];let ch='';
+    if(prev){const d=(e.wt-prev.wt).toFixed(1);const cl=d<0?'up':d>0?'dn':'nc';const lb=d<0?d+' lbs':d>0?'+'+d+' lbs':'—';ch='<span class="hch '+cl+'">'+lb+'</span>';}
+    return '<div class="hist-item"><span class="hdate">'+e.date+'</span><span class="hval">'+e.wt+' lbs</span>'+ch+'</div>';
+  }).join('');
+}
+
+function renderBStr(){
+  if(!BST.day)BST.day='Wednesday';
+  const wkBar=document.getElementById('bwk-bar');wkBar.innerHTML='';
+  for(let i=1;i<=8;i++){
+    const ph=phFor(i);const hasDone=ph.days.some(d=>BST.wd['done__'+i+'__'+d.day]);
+    const b=document.createElement('button');b.className='wk-btn'+(i===BST.wk?' active':'')+(hasDone&&i!==BST.wk?' has-data':'');
+    b.textContent='Wk '+i+(hasDone?' ✓':'');
+    const wi=i;b.addEventListener('click',()=>{BST.wk=wi;bsave();renderBStr();});
+    wkBar.appendChild(b);
+  }
+  const dayBar=document.getElementById('bday-bar');dayBar.innerHTML='';
+  const DAYS=['Wednesday','Thursday','Friday','Saturday','Sunday','Monday','Tuesday'];
+  const DAY_LABELS={Wednesday:'Wed',Thursday:'Thu',Friday:'Fri',Saturday:'Weekend',Sunday:'Weekend',Monday:'Mon',Tuesday:'Tue'};
+  const ph0=phFor(BST.wk);
+  const seen=new Set();
+  DAYS.forEach(dn=>{
+    const label=DAY_LABELS[dn];
+    if(label==='Weekend'&&seen.has('Weekend'))return;
+    seen.add(label);
+    const workoutDay=label==='Weekend'?(['Saturday','Sunday'].find(d=>ph0.days.some(dd=>dd.day===d))||'Saturday'):dn;
+    const isDone=BST.wd['done__'+BST.wk+'__'+workoutDay];
+    const isActive=BST.day===workoutDay||(label==='Weekend'&&(BST.day==='Saturday'||BST.day==='Sunday'));
+    const b=document.createElement('button');b.className='day-btn'+(isActive?' active':'')+(isDone?' done':'');
+    b.innerHTML=label+'<span class="day-dot-sm"></span>';
+    b.addEventListener('click',()=>{BST.day=workoutDay;bsave();renderBStr();});
+    dayBar.appendChild(b);
+  });
+  renderBDayView();
+}
+
+function renderBDayView(){
+  const cont=document.getElementById('bstr-content');cont.innerHTML='';
+  const ph=phFor(BST.wk);
+  if(ph.label==='Deload'){
+    const a=document.createElement('div');
+    a.style.cssText='background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#86efac';
+    a.innerHTML='<strong>🟢 Deload Week</strong> · 50-60% of working weights · No metcons · Recovery focus';
+    cont.appendChild(a);
+  }
+  const badge=document.createElement('div');badge.className='phase-badge';
+  badge.style.cssText='background:'+ph.color+'22;border:1px solid '+ph.color+'55;color:'+ph.color;
+  badge.textContent=ph.label+' — Week '+BST.wk;cont.appendChild(badge);
+
+  const dayData=ph.days.find(d=>d.day===BST.day);
+  if(!dayData){cont.innerHTML+='<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">Rest day — no workout in this slot</div>';return;}
+
+  const dk='done__'+BST.wk+'__'+dayData.day;const done=BST.wd[dk];
+  const wc=document.createElement('div');wc.className='workout-card';wc.style.marginTop='8px';
+  const whDiv=document.createElement('div');whDiv.className='workout-header';
+  const whInfo=document.createElement('div');
+  whInfo.innerHTML='<div class="workout-day-lbl" style="color:#22c55e">'+dayData.day+' · '+dayData.type+'</div><div class="workout-name">'+dayData.name+'</div>';
+  const doneBtn=document.createElement('button');doneBtn.className='btn-done'+(done?' completed':'');
+  doneBtn.textContent=done?'✓ Done':'Mark done';
+  (function(k,d){doneBtn.addEventListener('click',function(){BST.wd[k]=!BST.wd[k];this.textContent=BST.wd[k]?'✓ Done':'Mark done';this.className='btn-done'+(BST.wd[k]?' completed':'');bsave();});})(dk,dayData.day);
+  whDiv.appendChild(whInfo);whDiv.appendChild(doneBtn);wc.appendChild(whDiv);
+
+  if(dayData.cardio){const cb=document.createElement('div');cb.className='cardio-banner';cb.textContent=dayData.cardio;wc.appendChild(cb);}
+
+  if(dayData.metcon){
+    const mb=document.createElement('div');mb.className='metcon-banner';
+    mb.innerHTML='<div class="metcon-title">'+dayData.metcon.type+'</div><div class="metcon-desc">'+dayData.metcon.desc+'</div>';
+    wc.appendChild(mb);
+  }
+
+  // Render exercises
+  window._bSkipReg={};window._bSkipIdx=0;
+  dayData.exercises.forEach(ex=>{
+    const div=document.createElement('div');div.className='ex-row'+(ex.m&&ex.m!=='compound'?' focus-muscle':'');
+    const ns=typeof ex.sets==='number'?ex.sets:1;
+    const mt=ex.m&&MTAGS[ex.m]?'<span class="mtag '+MTAGS[ex.m]+'">'+MLBLS[ex.m]+'</span>':'';
+    const ni=ex.note?'<div class="ex-note">'+ex.note+'</div>':'';
+    const exDesc=EX_DESC[ex.n]||'';
+    let html='<div class="ex-top" style="align-items:center"><div style="flex:1;min-width:0"><div class="ex-name">'+ex.n+'</div>'+(exDesc?'<div class="ex-desc">'+exDesc+'</div>':'')+'<div class="ex-meta">'+ns+'×'+ex.reps+' · '+ex.eq+'</div>'+mt+ni+'</div></div>';
+    html+='<div class="sets-container">';
+    for(let s=1;s<=ns;s++){
+      const sk=BST.wk+'__'+dayData.day+'__'+ex.n+'__s'+s;const sv=BST.wd[sk]||{};
+      const sug=getSuggest(ex.n,dayData.day,s);
+      // Look for previous set in same workout to use as pre-fill
+      let prevSetWt=0,prevSetReps=0;
+      for(let pSet=s-1;pSet>=1;pSet--){
+        const prevSk=BST.wk+'__'+dayData.day+'__'+ex.n+'__s'+pSet;
+        const prevSv=BST.wd[prevSk]||{};
+        if(prevSv.wt&&!prevSetWt)prevSetWt=parseFloat(prevSv.wt)||0;
+        if(prevSv.reps&&!prevSetReps)prevSetReps=parseInt(prevSv.reps)||0;
+        if(prevSetWt&&prevSetReps)break;
+      }
+      const cw=sv.wt!==undefined&&sv.wt!==''?parseFloat(sv.wt)||0:(prevSetWt||sug.wt||0);
+      const cr=sv.reps!==undefined&&sv.reps!==''?parseInt(sv.reps)||0:(prevSetReps||sug.reps||0);
+      const hasLogged=sv.wt!==undefined&&sv.wt!=='';
+      const isPreFill=!hasLogged&&(prevSetWt>0||sug.wt>0);
+      const exEnc=encodeURIComponent(ex.n);const dayEnc=encodeURIComponent(dayData.day);const wtInc=getWtIncrement(ex.n);
+      html+='<div class="set-row'+(hasLogged?' done-set':'')+'" id="bsr__'+sk+'">'
+        +'<div class="set-num">S'+s+'</div>'
+        +'<div class="set-field"><div class="set-field-lbl">Weight</div><div class="adj-row">'
+        +'<button class="adj-btn" data-sk="'+sk+'" data-f="wt" data-d="-'+wtInc+'" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjBFromBtn(this)">−</button>'
+        +'<div class="set-val-display'+(isPreFill?' prefill':'')+'" id="bwv__'+sk+'">'+(cw||'—')+'</div>'
+        +'<button class="adj-btn" data-sk="'+sk+'" data-f="wt" data-d="'+wtInc+'" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjBFromBtn(this)">+</button>'
+        +'</div></div>'
+        +'<div class="set-sep">×</div>'
+        +'<div class="set-field"><div class="set-field-lbl">Reps</div><div class="adj-row">'
+        +'<button class="adj-btn" data-sk="'+sk+'" data-f="reps" data-d="-1" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjBFromBtn(this)">−</button>'
+        +'<div class="set-val-display'+(isPreFill?' prefill':'')+'" id="brv__'+sk+'">'+(cr||'—')+'</div>'
+        +'<button class="adj-btn" data-sk="'+sk+'" data-f="reps" data-d="1" data-n="'+exEnc+'" data-day="'+dayEnc+'" data-s="'+s+'" onclick="adjBFromBtn(this)">+</button>'
+        +'</div></div></div>';
+    }
+    html+='</div>';
+    // Note
+    const bNoteKey='note__'+dayData.day+'__'+ex.n;
+    const bSavedNote=BST.wd[bNoteKey]||'';
+    const bNkEnc=encodeURIComponent(bNoteKey);
+    html+='<span class="note-toggle" data-nk="'+bNkEnc+'" onclick="togBNoteBtn(this)">'+(bSavedNote?'Edit note':'+ Add note')+'</span>'
+      +'<div class="note-area'+(bSavedNote?' open':'')+'">'
+      +'<textarea class="note-input" data-nk="'+bNkEnc+'" onchange="saveBNoteBtn(this)">'+bSavedNote+'</textarea></div>';
+    div.innerHTML=html;wc.appendChild(div);
+  });
+  cont.appendChild(wc);
+}
+
+function adjBFromBtn(btn){
+  const scrollY=window.scrollY;
+  const sk=btn.dataset.sk;const f=btn.dataset.f;const d=parseFloat(btn.dataset.d);
+  const n=decodeURIComponent(btn.dataset.n);const day=decodeURIComponent(btn.dataset.day);const s=btn.dataset.s;
+  if(!BST.wd[sk])BST.wd[sk]={};
+  let cur;
+  if(BST.wd[sk][f]!==undefined&&BST.wd[sk][f]!==''){
+    cur=parseFloat(BST.wd[sk][f])||0;
+  } else {
+    // Seed from previous set in same workout for this exercise
+    const setNum=parseInt(s);
+    let prevSetVal=0;
+    for(let pSet=setNum-1;pSet>=1;pSet--){
+      const prevSk=BST.wk+'__'+day+'__'+n+'__s'+pSet;
+      const prevSv=BST.wd[prevSk]||{};
+      if(prevSv[f]!==undefined&&prevSv[f]!==''){
+        prevSetVal=parseFloat(prevSv[f])||0;
+        break;
+      }
+    }
+    if(prevSetVal>0){
+      cur=prevSetVal;
+    } else {
+      // Fallback to suggested starting weight
+      const sug=getSuggest(n,day,s);
+      cur=f==='wt'?(sug.wt||0):(sug.reps||0);
+    }
+  }
+  const neo=Math.max(0,cur+d);BST.wd[sk][f]=neo.toString();
+  const wtEl=document.getElementById('bwv__'+sk);const rpEl=document.getElementById('brv__'+sk);
+  if(f==='wt'&&wtEl)wtEl.textContent=neo||'—';
+  if(f==='reps'&&rpEl)rpEl.textContent=neo||'—';
+  if(f==='reps'&&neo>0){
+    const ph=phFor(BST.wk);const dd=ph?ph.days.find(x=>x.day===day):null;
+    const ex=dd?dd.exercises.find(e=>e.n===n):null;
+    const totalSets=ex?(typeof ex.sets==='number'?ex.sets:1):3;
+    const setNum=parseInt(s);let nextEx=null;
+    if(ex&&dd&&setNum>=totalSets){const exIdx=dd.exercises.findIndex(e=>e.n===n);if(exIdx>=0&&exIdx+1<dd.exercises.length)nextEx=dd.exercises[exIdx+1].n;}
+    else if(ex&&setNum<totalSets){nextEx=ex.n+' set '+(setNum+1);}
+    startRest(n,setNum,totalSets,nextEx);
+  }
+  bsave();
+  requestAnimationFrame(()=>window.scrollTo(0,scrollY));
+}
+
+function togBNoteBtn(el){
+  const key=decodeURIComponent(el.dataset.nk);
+  const area=el.nextElementSibling;area.classList.toggle('open');
+  el.textContent=area.classList.contains('open')?(BST.wd[key]?'Edit note':'+ Add note'):'+ Add note';
+}
+function saveBNoteBtn(ta){
+  const key=decodeURIComponent(ta.dataset.nk);
+  BST.wd[key]=ta.value;bsave();
+}
+
+function renderBenTrends(){
+  const el=document.getElementById('ben-trends-content');if(!el)return;
+  const history=(BST.watchHistory||[]).filter(w=>w.activeCal>0);
+  if(history.length<2){el.innerHTML='<div class="trend-empty">📷 Scan at least 2 workouts to see trends</div>';return;}
+  let html='';
+  if(history.length>=2)html+=buildBarChart('Active Calories — All Sessions',history.slice(0,10).reverse(),'activeCal','#22c55e','cal',true);
+  if(history.length>=3)html+=buildHRTrend('Avg HR Trend',history.slice(0,10).reverse(),true);
+  el.innerHTML=html;
+}
+
+function saveBenApiKey(){
+  const key=document.getElementById('ben-api-key-input').value.trim();
+  if(!key)return;
+  localStorage.setItem('ben_api_key',key);
+  updateBenApiKeyStatus();
+  document.getElementById('ben-api-key-input').value='';
+}
+
+function updateBenApiKeyStatus(){
+  const key=localStorage.getItem('ben_api_key')||'';
+  const el=document.getElementById('ben-api-key-status');
+  if(el){el.textContent=key?'✓ API key saved':'⚠ No API key — add one to enable scanning';el.style.color=key?'var(--green)':'var(--amber)';}
+}
+
+
+function updateDateBar(){
+  const today = new Date();
+  const dayName = today.toLocaleDateString('en-US',{weekday:'long'});
+  const fullDate = today.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const dayEl = document.getElementById('date-day');
+  const fullEl = document.getElementById('date-full');
+  if(dayEl) dayEl.textContent = dayName;
+  if(fullEl) fullEl.textContent = fullDate;
+}
+updateDateBar();
+setInterval(updateDateBar, 60000); // refresh every minute
+
 </script>
 
 <!-- JEWEL PROFILE (hidden by default) -->
@@ -3410,6 +4042,96 @@ window.showJTab = function(t){
     <div id="forge-scan-history"><div style="font-size:11px;color:var(--text3);padding:8px 0">No scans yet</div></div>
   </div>
 </div>
+
+
+<!-- BEN PROFILE (hidden by default) -->
+<div id="ben-profile" style="display:none">
+<div class="tabs" id="ben-tabs">
+  <button class="tab-btn active" onclick="showBTab('bdash')">Dashboard</button>
+  <button class="tab-btn" onclick="showBTab('bstr')">Strength</button>
+  <button class="tab-btn" onclick="showBTab('btrends')">📈 Trends</button>
+  <button class="tab-btn" onclick="showBTab('bscan')">📷 Scan</button>
+</div>
+
+<!-- BEN DASHBOARD -->
+<div id="tab-bdash" class="section active">
+  <div class="alert" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:#86efac;border-radius:10px;padding:10px 13px;font-size:12px;margin-bottom:10px">
+    <strong>8-Week PPL Program</strong> · Started Fri May 1, 2026 with Legs 1 · 6 workouts/week · Deload Week 6
+  </div>
+  <div class="metrics">
+    <div class="metric"><div class="metric-val" style="color:#22c55e" id="bw">—</div><div class="metric-label">lbs now</div></div>
+    <div class="metric"><div class="metric-val" style="color:var(--blue)" id="bwk-now">1</div><div class="metric-label">Week</div></div>
+    <div class="metric"><div class="metric-val" style="color:var(--amber)" id="bsess">0</div><div class="metric-label">Sessions</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Weight log</div>
+    <div class="row-input"><input type="number" id="bwi" placeholder="Enter starting weight" step="0.1"><button class="btn-primary" style="background:#22c55e" onclick="logBWt()">Log</button></div>
+    <div id="bwh" style="margin-top:10px"><div style="font-size:11px;color:var(--text3);text-align:center;padding:8px">No weight logs yet — enter your starting weight to begin</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Weekly schedule</div>
+    <div style="font-size:12px;line-height:2.2;color:var(--text2)">
+      <div><span style="color:#22c55e;font-weight:600;margin-right:8px">Wed</span>Push 1 — Chest, Shoulders, Triceps</div>
+      <div><span style="color:#22c55e;font-weight:600;margin-right:8px">Thu</span>Pull 1 — Back, Biceps, Rear Delts</div>
+      <div><span style="color:#22c55e;font-weight:600;margin-right:8px">Fri</span>Legs 1 — Hinge, Glutes, Squat Intro</div>
+      <div><span style="color:#3b82f6;font-weight:600;margin-right:8px">Weekend</span>Push 2 — Heavy Chest, Shoulders, Arms</div>
+      <div><span style="color:#3b82f6;font-weight:600;margin-right:8px">Mon</span>Pull 2 — Heavy Back, Bicep Peak</div>
+      <div><span style="color:#3b82f6;font-weight:600;margin-right:8px">Tue</span>Legs 2 — Glutes, Single-Leg, Squat</div>
+    </div>
+    <div style="margin-top:10px;padding:8px 10px;background:rgba(34,197,94,0.1);border-radius:8px;font-size:11px;color:#86efac">
+      📅 Today: <strong id="ben-today-label">—</strong>
+    </div>
+  </div>
+</div>
+
+<!-- BEN STRENGTH -->
+<div id="tab-bstr" class="section">
+  <div id="bwk-bar" style="display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px"></div>
+  <div style="display:flex;overflow-x:auto;scrollbar-width:none;margin-bottom:12px" id="bday-bar"></div>
+  <div id="bstr-content"></div>
+</div>
+
+<!-- BEN TRENDS -->
+<div id="tab-btrends" class="section">
+  <div id="ben-trends-content"><div class="trend-empty">📷 Scan at least 2 workouts to see trends</div></div>
+</div>
+
+<!-- BEN SCAN -->
+<div id="tab-bscan" class="section">
+  <div class="card">
+    <div class="card-title">API Key</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Get a free key at console.anthropic.com — see Settings tab in FORGE for full instructions</div>
+    <div class="api-key-row">
+      <input type="password" class="api-key-input" id="ben-api-key-input" placeholder="sk-ant-api03-...">
+      <button class="btn-primary" style="font-size:11px;padding:8px 12px;background:#22c55e" onclick="saveBenApiKey()">Save</button>
+    </div>
+    <div id="ben-api-key-status" style="font-size:11px;color:var(--text3)"></div>
+  </div>
+
+  <div class="scan-card">
+    <div class="scan-title">⌚ Scan Apple Watch Workout</div>
+    <div class="scan-upload-area">
+      <input type="file" accept="image/*" id="ben-watch-file" onchange="handleScan('ben-watch',this)">
+      <div class="scan-icon">⌚</div>
+      <div class="scan-label">Tap to upload Watch screenshot</div>
+      <div class="scan-sub">Auto-detects workout type and date</div>
+    </div>
+    <img id="ben-watch-preview" class="scan-preview">
+    <div class="scan-loading" id="ben-watch-loading"><div class="spin"></div><div>Reading workout data...</div></div>
+    <div class="scan-result" id="ben-watch-result">
+      <div class="scan-result-title">✓ Workout detected</div>
+      <div id="ben-watch-fields"></div>
+      <button class="btn-primary" style="width:100%;margin-top:10px;background:#22c55e" onclick="logScannedWorkout('ben')">Log this workout</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Recent scans</div>
+    <div id="ben-scan-history"><div style="font-size:11px;color:var(--text3);padding:8px 0">No scans yet</div></div>
+  </div>
+</div>
+
+</div><!-- end ben-profile -->
 
 </body>
 </html>
